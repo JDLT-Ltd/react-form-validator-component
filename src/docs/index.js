@@ -10,10 +10,14 @@ const App = () => {
     <React.Fragment>
       <Header as="h1">Hello</Header>
       <Validator>
-          <Form>
-            <Label>Testy test test</Label>
-            <Input />
-          </Form>
+        {() => {
+          return (
+            <Form>
+              <Label>Testy test test</Label>
+              <Input />
+            </Form>)
+        }}
+
       </Validator>
     </React.Fragment>
   )
