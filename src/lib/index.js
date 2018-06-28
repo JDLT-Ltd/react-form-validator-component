@@ -1,15 +1,4 @@
-// export everything from here
+import Validator from './Validator'
 
-import React from 'react'
-
-class Validator extends React.Component {
-  constructor(props) {
-    super(props)
-  }
-
-  render() {
-    return this.props.children()
-  }
-}
 
 export { Validator }
