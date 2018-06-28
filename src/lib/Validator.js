@@ -55,6 +55,7 @@ export default class Validator extends React.Component {
   // </Form>
 
   render() {
+    console.log(this.props)
     return this.props.children({ isValid: this.state.isValid,  })
   }
 }

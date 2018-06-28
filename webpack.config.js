@@ -20,6 +20,21 @@ module.exports = {
       }
     ]
   },
+  devServer: {
+    contentBase: ['src/docs'],
+    watchContentBase: true,
+    historyApiFallback: true,
+    hot: true,
+    inline: true,
+    port: 3000,
+    open: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:4000',
+        secure: false
+      }
+    }
+  },
   externals: {
     // Don't bundle react or react-dom
     react: {
