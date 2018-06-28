@@ -19,8 +19,18 @@ export default class Validator extends React.Component {
     super(props)
 
     this.state = {
-      isValid: false
+      isValid: false,
+      data: this.toArray(this.props.data)
     }
+  }
+
+  toArray = data => {
+    return Object.entries(data).reduce((accumulator, [key, value]) => {
+      return accumulator.concat({
+        key,
+        value
+      })
+    }, [])
   }
 
   TestErrorLabel = ({ name }) => {
@@ -29,16 +39,9 @@ export default class Validator extends React.Component {
     )
   }
 
-  // <Form>
-  //   <Form.Input type='text' placeholder='input something' name='input' onChange={(e) => this.onChangeValidate(e, required)}></Form.Input>
-
-
-  //   <Form.Input type='email' placeholder='input an email' name='testEmail' onChange={(e) => this.onChangeValidate(e, isAnEmail)}></Form.Input>
-  //   <this.TestErrorLabel name='testEmail' />
-  // </Form>
-
   render() {
-    console.log(this.props)
-    return this.props.children({ isValid: this.state.isValid,  })
+    const { isValid, data } = this.state
+    console.log(data)
+    return this.props.children({ isValid, data })
   }
 }
