@@ -2,7 +2,6 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import * as defaultRules from './rules'
-
 export default class Validator extends React.Component {
   constructor(props) {
     super(props)
@@ -18,10 +17,8 @@ export default class Validator extends React.Component {
     }
   }
 
-  static defaultProps = {
-    onChangeValue: e => {
-      this.props.form.setState({ [e.target.name]: e.target.value })
-    }
+  onChangeValue = e => {
+    this.props.parent.setState({ [e.target.name]: e.target.value })
   }
 
   toArray = object => {
@@ -75,7 +72,8 @@ export default class Validator extends React.Component {
   onChange = e => {
     const fieldName = e.target.name
     const fieldValue = e.target.value
-    if (this.validateField(fieldName, fieldValue)) this.props.onChangeValue(e)
+    const onChangeValue = this.props.onChangeValue || this.onChangeValue
+    if (this.validateField(fieldName, fieldValue)) onChangeValue(e)
 
     this.setState({
       isValid: Object.values(this.state.validation).every(value => value)
@@ -94,7 +92,7 @@ export default class Validator extends React.Component {
 }
 
 Validator.propTypes = {
-  form: PropTypes.object,
+  parent: PropTypes.object,
   children: PropTypes.func,
   onChangeValue: PropTypes.func,
   fields: PropTypes.object

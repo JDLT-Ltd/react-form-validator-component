@@ -8,7 +8,13 @@ import { Validator } from '../lib/index'
 //   input: props => <Input {...props} />,
 //   textArea: props => <TextArea {...props} />
 // }
-
+const isRequired = {
+  validator: data => {
+    if (data) return true
+    return false
+  },
+  error: 'Please provide a value'
+}
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -16,17 +22,7 @@ class App extends React.Component {
     this.state = {
       fields: {
         emailAddresses: {
-          rules: [
-            'isEmailArray',
-            {
-              validator: data => {
-                if (data) return true
-                return false
-              },
-              error: 'Please provide a value'
-            },
-            'isEmailArray2'
-          ],
+          rules: ['isEmailArray', isRequired],
           label: 'Email addresses'
         }
       }
@@ -37,7 +33,7 @@ class App extends React.Component {
     return (
       <Container>
         <Header as="h1">Hello</Header>
-        <Validator fields={this.state.fields} form={this}>
+        <Validator fields={this.state.fields} parent={this}>
           {({ isValid, fields, onChange, errors }) => {
             return (
               <Form>
