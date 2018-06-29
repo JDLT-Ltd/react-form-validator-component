@@ -22,7 +22,13 @@ class App extends React.Component {
 
     this.state = {
       fields: {
-        emailAddresses: ["isEmailArray", "required", "isEmailArray2"]
+        emailAddresses: ["isEmailArray", {
+          validator: (data) => {
+            if (data) return true
+            return false
+          },
+          error: 'Please provide a value'
+        }, "isEmailArray2"]
       }
     };
   }
@@ -36,13 +42,15 @@ class App extends React.Component {
       <Container>
         <Header as="h1">Hello</Header>
         <Validator fields={this.state.fields} onChangeValue={this.onChangeValue}>
-          {({ isValid, fields, onChange }) => {
+          {({ isValid, fields, onChange, errors }) => {
             return (
               <Form>
                 <Form.Field>
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange}/>
+                  {errors.emailAddresses && errors.emailAddresses.length > 0 && <span>{errors.emailAddresses}</span>}
                 </Form.Field>
+                {isValid && <span>Form is valid</span>}
               </Form>
             );
           }}
