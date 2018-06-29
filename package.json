@@ -1,5 +1,5 @@
 {
-  "name": "react-form-validator",
+  "name": "react-form-validator-component",
   "version": "1.0.0",
   "main": "build/lib/index.js",
   "repository": "git@github.com:JDLT-Ltd/react-form-validator.git",
