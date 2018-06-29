@@ -8,11 +8,23 @@ export default class Validator extends React.Component {
 
     this.state = {
       fields: props.fields,
-      errors: {},
+      errors: Object.keys(props.fields).reduce((accumulator, currentValue) => {
+        accumulator[currentValue] = []
+        return accumulator
+      },{}) ,
       validation: {},
       isValid: false
     };
   }
+
+  toArray = object => {
+    return Object.entries(object).reduce((accumulator, [key, value]) => {
+      return accumulator.concat({
+        key,
+        value
+      });
+    }, []);
+  };
 
   // merge value with current property on state
   addToStateProperty = (target, value) => {
@@ -39,7 +51,7 @@ export default class Validator extends React.Component {
   };
 
   validateField = (fieldName, fieldValue) => {
-    const fieldRules = this.state.fields[fieldName];
+    const fieldRules = this.state.fields[fieldName].rules;
     const isValid = fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule;
       const validation = rule.validator(fieldValue);
@@ -69,7 +81,7 @@ export default class Validator extends React.Component {
     const { fields, errors, isValid } = this.state;
     return this.props.children({
       isValid,
-      fields,
+      fields: this.toArray(fields),
       onChange: this.onChange,
       errors
     });

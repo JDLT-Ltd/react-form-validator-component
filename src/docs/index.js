@@ -22,13 +22,20 @@ class App extends React.Component {
 
     this.state = {
       fields: {
-        emailAddresses: ["isEmailArray", {
-          validator: (data) => {
-            if (data) return true
-            return false
-          },
-          error: 'Please provide a value'
-        }, "isEmailArray2"]
+        emailAddresses: {
+          rules: [
+            "isEmailArray",
+            {
+              validator: data => {
+                if (data) return true;
+                return false;
+              },
+              error: "Please provide a value"
+            },
+            "isEmailArray2"
+          ],
+          label: 'Email addresses'
+        }
       }
     };
   }
@@ -41,15 +48,30 @@ class App extends React.Component {
     return (
       <Container>
         <Header as="h1">Hello</Header>
-        <Validator fields={this.state.fields} onChangeValue={this.onChangeValue}>
+        <Validator
+          fields={this.state.fields}
+          onChangeValue={this.onChangeValue}
+        >
           {({ isValid, fields, onChange, errors }) => {
+            console.log(errors)
             return (
               <Form>
                 <Form.Field>
                   <label>Your Emails</label>
-                  <Input name="emailAddresses" onChange={onChange}/>
-                  {errors.emailAddresses && errors.emailAddresses.length > 0 && <span>{errors.emailAddresses}</span>}
+                  <Input name="emailAddresses" onChange={onChange} />
+                  {errors.emailAddresses.map((error, i)=> {
+                    return <Label key={i}>{error}</Label>
+                  })}
+
                 </Form.Field>
+                {/* {fields.map(field => {
+                  return(
+                    <Form.Field key={field.label}>
+                      <label>{field.value.label}</label>
+                      <Input name={field.key} onChange={onChange}/>
+                    </Form.Field>
+                  )
+                })} */}
                 {isValid && <span>Form is valid</span>}
               </Form>
             );
