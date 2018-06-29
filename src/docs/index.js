@@ -1,47 +1,55 @@
-import React from 'react'
-import reactDOM from 'react-dom'
-import { Form, Header, Label, Input, Container } from 'semantic-ui-react'
+import React from "react";
+import reactDOM from "react-dom";
+import {
+  Form,
+  Header,
+  Label,
+  Input,
+  Container,
+  TextArea
+} from "semantic-ui-react";
 
-import { Validator } from '../lib/index'
+import { Validator } from "../lib/index";
 
+const inputMap = {
+  input: props => <Input {...props} />,
+  textArea: props => <TextArea {...props} />
+};
 
 class App extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      name: {name: 'Name', rule: 'isName'},
-      emailAddress: { name: 'Email address', rule: 'isEmail' }
-    }
+      fields: {
+        emailAddresses: ["isEmailArray", "required", "isEmailArray2"]
+      }
+    };
   }
+
+  onChangeValue = e => {
+    this.setState({ [e.target.name]: e.target.value });
+  };
+
   render() {
     return (
       <Container>
         <Header as="h1">Hello</Header>
-        <Validator
-          data={this.state}
-        >
-          {({ isValid, data }) => {
+        <Validator fields={this.state.fields} onChangeValue={this.onChangeValue}>
+          {({ isValid, fields, onChange }) => {
             return (
               <Form>
-                {
-                  data.map(item => {
-                    return (
-                      <Form.Field key={item.key}>
-                        <label>{item.value.name}</label>
-                        <Input />
-                      </Form.Field>
-                    )
-                  })
-                }
-              </Form>)
+                <Form.Field>
+                  <label>Your Emails</label>
+                  <Input name="emailAddresses" onChange={onChange}/>
+                </Form.Field>
+              </Form>
+            );
           }}
-
         </Validator>
       </Container>
-    )
+    );
   }
 }
 
-
-reactDOM.render(<App />, document.getElementById('root'))
+reactDOM.render(<App />, document.getElementById("root"));

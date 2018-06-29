@@ -1,47 +1,45 @@
-import React from 'react'
+import React from "react";
 
-import * as rules from './rules'
-
-const onChangeValidate = (e, rule) => {
-  if (rule.rule(e.target.value)) {
-    console.log('valid input')
-    this.setState({ [e.target.name]: e.target.value })
-  }
-  else {
-    console.log(rule.error)
-    this.setState({ [e.target.name]: false, [`${e.target.name}Error`]: rule.error })
-  }
-}
-
+import * as rules from "./rules";
 
 export default class Validator extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
 
     this.state = {
-      isValid: false,
-      data: this.toArray(this.props.data)
-    }
-  }
-
-  toArray = data => {
-    return Object.entries(data).reduce((accumulator, [key, value]) => {
-      return accumulator.concat({
-        key,
-        value
-      })
-    }, [])
+      fields: props.fields,
+      errors: {},
+      validation: {}
+    };
   }
 
   TestErrorLabel = ({ name }) => {
-    if (this.state[`${name}Error`]) return (
-      <Label>error: {this.state[`${name}Error`]}</Label>
-    )
-  }
+    if (this.state[`${name}Error`])
+      return <Label>error: {this.state[`${name}Error`]}</Label>;
+  };
+
+  validate = (fieldName, fieldValue, ruleNames) => {
+    const isValid = ruleNames.reduce((accumulator, ruleName) =>{
+      const validation = rules[ruleName].validator(fieldValue)
+      if (!validation) this.setState({ errors: Object.assign(this.state.errors, {[fieldName]: [...new Set([...(this.state.errors[fieldName] || []), rules[ruleName].error ])]})})
+      return accumulator && validation
+    }, true);
+
+    this.setState({
+      validation: Object.assign(this.state.validation, { [fieldName]: isValid })
+    });
+    return isValid;
+  };
+
+  onChange = e => {
+    const fieldName = e.target.name
+    if (this.validate(fieldName, e.target.value, this.state.fields[fieldName])) {
+      this.props.onChange(e);
+    }
+  };
 
   render() {
-    const { isValid, data } = this.state
-    console.log(data)
-    return this.props.children({ isValid, data })
+    const { fields, errors } = this.state;
+    return this.props.children({ isValid: Object.values(this.state.validation).every(value => value), fields, onChange: this.onChange, errors });
   }
 }
