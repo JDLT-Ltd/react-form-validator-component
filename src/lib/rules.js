@@ -1,4 +1,4 @@
-const required = {
+const isRequired = {
   validator: data => {
     if (data) return true
     return false
@@ -16,12 +16,4 @@ const isEmailArray = {
   error: 'Please provide a valid email address'
 }
 
-const isEmailArray2 = {
-  validator: data => {
-    if (data.match(emailArrayRegex)) return true
-    return false
-  },
-  error: 'test test test'
-}
-
-export { required, isEmailArray, isEmailArray2 }
+export { isRequired, isEmailArray }

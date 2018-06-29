@@ -17,8 +17,8 @@ export default class Validator extends React.Component {
     }
   }
 
-  onChangeValue = e => {
-    this.props.parent.setState({ [e.target.name]: e.target.value })
+  onChangeValue = (name, value) => {
+    this.props.parent.setState({ [name]: value })
   }
 
   toArray = object => {
@@ -73,7 +73,9 @@ export default class Validator extends React.Component {
     const fieldName = e.target.name
     const fieldValue = e.target.value
     const onChangeValue = this.props.onChangeValue || this.onChangeValue
-    if (this.validateField(fieldName, fieldValue)) onChangeValue(e)
+
+    const newValue = this.validateField(fieldName, fieldValue) ? fieldValue : undefined
+    onChangeValue(fieldName, newValue)
 
     this.setState({
       isValid: Object.values(this.state.validation).every(value => value)
