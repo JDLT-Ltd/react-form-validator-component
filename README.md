@@ -6,7 +6,9 @@ The render prop function will be passed `isValid`, `errors`, `fields`, and `onCh
 
 ## Installation
 
-PLACEHOLDER
+`yarn add react-validator-component`
+
+`import { Validator } from 'react-validator-component'
 
 ## Example
 
