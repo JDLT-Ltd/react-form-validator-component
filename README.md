@@ -51,8 +51,8 @@ class ExampleForm extends React.Component {
 
 ### Props
 
-`Validator` has one required prop, `fields`, which is an object containing one object per input field.  
-The key must match the name attribute of the input field it refers to and its value is an array of any combination of strings referring to our predefined validation rules and user-defined custom rules.
+`Validator` has one required prop, `fields`, which is an object with one property per input field.  
+The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules.
 
 ##### Using predefined rules
 
