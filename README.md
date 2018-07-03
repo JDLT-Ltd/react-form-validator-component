@@ -2,7 +2,7 @@
 
 React Form Validator exposes a single React component which uses the render prop pattern to validate the input on its child form.
 
-The render prop function will be passed `isValid`, `errors`, `fields`, and `onChange` to use in the form itself.
+The render prop function will be passed `isFormValid`, `isFieldValid`, `errors`, `fields`, and `onChange` to use in the form itself.
 
 ## Installation
 
@@ -29,7 +29,7 @@ class ExampleForm extends React.Component {
   render() {
     return (
       <Validator fields={this.state.fields} parent={this}>
-        {({ isValid, fields, onChange, errors }) => {
+        {({ isFormValid, fields, onChange, errors }) => {
           return (
             <form>
               <label>Your Emails</label>
@@ -37,7 +37,7 @@ class ExampleForm extends React.Component {
               {errors.emailAddress.map((error, i) => {
                 return <span key={i}>{error}</span>
               })}
-              {isValid && <button type="submit">Submit</button>}
+              {isFormValid && <button type="submit">Submit</button>}
             </form>
           )
         }}
@@ -94,9 +94,14 @@ Alternatively, you can provide an `onPassValidation` prop, which is a handler de
 
 The following arguments are provided to the render prop function:
 
-#### `isValid`
+#### `isFormValid`
 
 A boolean. `true` when all inputs are validated.
+
+#### `isFieldValid`
+
+An object with a property for each field which will be `true` if it's valid and `false` if it's not.
+
 
 #### `fields`
 
