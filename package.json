@@ -1,6 +1,6 @@
 {
   "name": "react-form-validator-component",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "build/lib/index.js",
   "repository": "git@github.com:JDLT-Ltd/react-form-validator-component.git",
   "author": "Gary Holland <garyhollandxyz@gmail.com>, Fabian Feldberg <monsagri@gmail.com>",
@@ -10,7 +10,8 @@
   },
   "scripts": {
     "build": "webpack",
-    "start": "webpack-dev-server --hot --config webpack.dev.config.js"
+    "start": "webpack-dev-server --hot --config webpack.dev.config.js",
+    "publish": "yarn build && git push && npm publish"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.51",
