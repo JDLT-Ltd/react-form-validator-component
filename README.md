@@ -85,10 +85,10 @@ fields: {
 
 Where `validator` is a function returning a boolean and `error` is the desired error message.
 
-You must also provide one of either `parent` or `onChangeValue`.  
+You must also provide one of either `parent` or `onPassValidation`.  
 `parent` is a reference to the component whose state `Validator` should add validated form data to. By default a property will be added to `parent`'s state with a key equal to the `name` attribute of its `input` and a value equal to the valid input.
 
-Alternatively, you can provide an `onChangeValue` prop, which is the change handler defining what to do with valid input (`Validator` will only return valid input).
+Alternatively, you can provide an `onPassValidation` prop, which is a handler defining what to do with valid input (`Validator` will only return valid input).
 
 ### Arguments
 
