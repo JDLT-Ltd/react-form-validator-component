@@ -13,7 +13,7 @@ export default class Validator extends React.Component {
         return accumulator
       }, {}),
       validation: {},
-      isValid: false
+      isFormValid: false
     }
   }
 
@@ -54,7 +54,7 @@ export default class Validator extends React.Component {
 
   validateField = (fieldName, fieldValue) => {
     const fieldRules = this.state.fields[fieldName].rules
-    const isValid = fieldRules.reduce((accumulator, fieldRule) => {
+    const isFormValid = fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
 
@@ -64,9 +64,9 @@ export default class Validator extends React.Component {
     }, true)
 
     this.setState({
-      validation: Object.assign(this.state.validation, { [fieldName]: isValid })
+      validation: Object.assign(this.state.validation, { [fieldName]: isFormValid })
     })
-    return isValid
+    return isFormValid
   }
 
   onChange = e => {
@@ -81,14 +81,15 @@ export default class Validator extends React.Component {
     }
 
     this.setState({
-      isValid: Object.values(this.state.validation).every(value => value)
+      isFormValid: Object.values(this.state.validation).every(value => value)
     })
   }
 
   render() {
-    const { fields, errors, isValid } = this.state
+    const { fields, errors, isFormValid, validation } = this.state
     return this.props.children({
-      isValid,
+      isFormValid,
+      isFieldValid: validation,
       fields: this.toArray(fields),
       onChange: this.onChange,
       errors
