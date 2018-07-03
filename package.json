@@ -11,7 +11,7 @@
   "scripts": {
     "build": "webpack",
     "start": "webpack-dev-server --hot --config webpack.dev.config.js",
-    "publish": "yarn build && git push && npm publish"
+    "npm_publish": "yarn build && git push && npm publish"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0-beta.51",
