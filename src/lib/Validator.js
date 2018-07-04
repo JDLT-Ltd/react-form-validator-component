@@ -72,7 +72,8 @@ export default class Validator extends React.Component {
   onChange = e => {
     const fieldName = e.target.name
     const fieldValue = e.target.value
-    const onPassValidation = this.props.onPassValidation || this.onPassValidation
+    const onPassValidation =
+      this.props.fields[fieldName].onPassValidation || this.props.onPassValidation || this.onPassValidation
 
     if (this.validateField(fieldName, fieldValue)) {
       onPassValidation(fieldName, fieldValue)
