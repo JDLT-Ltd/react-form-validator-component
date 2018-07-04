@@ -12,7 +12,11 @@ export default class Validator extends React.Component {
         accumulator[currentValue] = []
         return accumulator
       }, {}),
-      validation: {},
+      validation: Object.keys(props.fields).reduce((accumulator, currentValue) => {
+        accumulator[currentValue] =
+          props.fields[currentValue].rules && props.fields[currentValue].rules.length > 0 ? false : true
+        return accumulator
+      }, {}),
       isFormValid: false
     }
   }

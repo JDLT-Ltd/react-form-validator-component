@@ -28,7 +28,6 @@ class App extends React.Component {
         },
         something: {
           name: 'something',
-          rules: [isRequired],
           label: 'Something'
         }
       }
