@@ -51,9 +51,23 @@ class ExampleForm extends React.Component {
 
 ### Props
 
-`Validator` has one required prop, `fields`, which is an object with one property per input field.  
+`Validator` has one **required** props  
+  * `fields` - an object with one property per input field  
 The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules.
+  
 
+It also has three **optional** props
+
+ * `parent` -  a reference to the component whose state `Validator` should add validated form data to.   
+  By default a property will be added to `parent`'s state with a key equal to the `name` attribute of its `input` and a value equal to the valid input.  
+ *  `onValidate` - A handler defining what to do with validated input.   
+ By default, `Validator` will set `parent.state[fieldName]` to be either  valid input or null if input is invalid.
+
+ **You need to provide at least one of `parent` or `onValidate`**
+ 
+  * `validateOnLoad` - a boolean  
+  If `validateOnLoad` is true, `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (empty fields will not dsiplay errors - however they will prevent set isFormValid to false)
+ 
 #### Using predefined rules
 
 ```javascript
@@ -85,10 +99,6 @@ fields: {
 
 Where `validator` is a function returning a boolean and `error` is the desired error message.
 
-You must also provide one of either `parent` or `onPassValidation`.  
-`parent` is a reference to the component whose state `Validator` should add validated form data to. By default a property will be added to `parent`'s state with a key equal to the `name` attribute of its `input` and a value equal to the valid input.
-
-Alternatively, you can provide an `onPassValidation` prop, which is a handler defining what to do with valid input (`Validator` will only return valid input).
 
 ### Arguments
 

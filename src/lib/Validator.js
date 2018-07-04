@@ -17,7 +17,7 @@ export default class Validator extends React.Component {
     }
   }
 
-  onPassValidation = (name, value) => {
+  onValidate = (name, value) => {
     this.props.parent.setState({ [name]: value })
   }
 
@@ -70,13 +70,12 @@ export default class Validator extends React.Component {
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
-    const onPassValidation =
-      this.props.fields[fieldName].onPassValidation || this.props.onPassValidation || this.onPassValidation
+    const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
-      onPassValidation(fieldName, fieldValue)
+      onValidate(fieldName, fieldValue)
     } else {
-      onPassValidation(fieldName, null)
+      onValidate(fieldName, null)
     }
 
     this.setState({
@@ -117,7 +116,7 @@ export default class Validator extends React.Component {
 Validator.propTypes = {
   parent: PropTypes.object,
   children: PropTypes.func,
-  onPassValidation: PropTypes.func,
+  onValidate: PropTypes.func,
   fields: PropTypes.object,
   validateOnLoad: PropTypes.bool
 }
