@@ -22,8 +22,14 @@ class App extends React.Component {
     this.state = {
       fields: {
         emailAddresses: {
+          name: 'emailAddresses',
           rules: ['isEmailArray', isRequired],
           label: 'Email addresses'
+        },
+        something: {
+          name: 'something',
+          rules: [isRequired],
+          label: 'Something'
         }
       }
     }
@@ -33,14 +39,21 @@ class App extends React.Component {
     return (
       <Container>
         <Header as="h1">Hello</Header>
-        <Validator fields={this.state.fields} parent={this}>
+        <Validator fields={this.state.fields} parent={this} validateOnLoad>
           {({ isValid, fields, onChange, errors }) => {
             return (
               <Form>
                 <Form.Field>
                   <label>Your Emails</label>
-                  <Input name="emailAddresses" onChange={onChange} />
+                  <Input name="emailAddresses" onChange={onChange} value="test" />
                   {errors.emailAddresses.map((error, i) => {
+                    return <Label key={i}>{error}</Label>
+                  })}
+                </Form.Field>
+                <Form.Field>
+                  <label>Something</label>
+                  <Input name="something" onChange={onChange} />
+                  {errors.something.map((error, i) => {
                     return <Label key={i}>{error}</Label>
                   })}
                 </Form.Field>

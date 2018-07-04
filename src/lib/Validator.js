@@ -69,21 +69,37 @@ export default class Validator extends React.Component {
     return isFormValid
   }
 
-  onChange = e => {
-    const fieldName = e.target.name
-    const fieldValue = e.target.value
+  validateFieldAndUpdateState(fieldName, fieldValue) {
     const onPassValidation =
       this.props.fields[fieldName].onPassValidation || this.props.onPassValidation || this.onPassValidation
 
     if (this.validateField(fieldName, fieldValue)) {
       onPassValidation(fieldName, fieldValue)
     } else {
-      this.props.parent.setState({ [fieldName]: undefined })
+      onPassValidation(fieldName, null)
     }
 
     this.setState({
       isFormValid: Object.values(this.state.validation).every(value => value)
     })
+  }
+
+  validateFormAndUpdateState = () => {
+    const fieldNames = Object.values(this.props.fields).map(field => field.name)
+
+    fieldNames.forEach(fieldName => {
+      const fieldValue = document.getElementsByName(fieldName)[0] ? document.getElementsByName(fieldName)[0].value : ''
+
+      if (fieldValue) this.validateFieldAndUpdateState(fieldName, fieldValue)
+    })
+  }
+
+  onChange = e => {
+    this.validateFieldAndUpdateState(e.target.name, e.target.value)
+  }
+
+  componentDidMount() {
+    if (this.props.validateOnLoad) this.validateFormAndUpdateState()
   }
 
   render() {
@@ -102,5 +118,6 @@ Validator.propTypes = {
   parent: PropTypes.object,
   children: PropTypes.func,
   onPassValidation: PropTypes.func,
-  fields: PropTypes.object
+  fields: PropTypes.object,
+  validateOnLoad: PropTypes.bool
 }
