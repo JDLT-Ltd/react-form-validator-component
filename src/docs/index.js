@@ -24,14 +24,12 @@ class App extends React.Component {
       name: 'emailAddresses',
       rules: ['isEmailArray'],
       required: 'group',
-      group: 'test',
       label: 'Email addresses'
     },
     something: {
       name: 'something',
       rules: ['isEmailArray'],
       required: 'group',
-      group: 'test',
       label: 'Something'
     }
   }

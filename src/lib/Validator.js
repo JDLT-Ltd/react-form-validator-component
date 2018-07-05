@@ -63,17 +63,21 @@ export default class Validator extends React.Component {
     // get 'required' value
     const isRequired = field.required
     // if false, make sure 'isRequired' isn't in rules, so that the required property always takes precedence
-    if (isRequired === false) fieldRules = [...fieldRules.fiter(r => r !== 'isRequired')]
+    if (isRequired === false) fieldRules = [...fieldRules.filter(r => r !== 'isRequired')]
     console.log(`fieldRules for ${fieldName} at 67: ${fieldRules}`)
     // if true, add 'isRequired' to rules, which will be fetched from defaultRules
     if (isRequired === true) fieldRules = [...fieldRules, 'isRequired']
     console.log(`fieldRules for ${fieldName} at 70: ${fieldRules}`)
     // if group, check whether the rest of the group are already valid
-    if (isRequired === 'group') {
-      const group = field.group
-      const groupFields = Object.values(this.state.fields).filter(f => f.group === group)
+    if (typeof isRequired === 'string') {
+      const group = field.required
+      const groupFields = Object.values(this.state.fields).filter(
+        f => typeof f.required === 'string' && f.required === group && f.name !== fieldName
+      )
+      console.log(groupFields)
       const othersValid = groupFields.reduce((accumulator, groupMember) => {
         const isGroupMemberValid = !!this.state.validation[groupMember]
+        console.log(isGroupMemberValid)
         return accumulator && isGroupMemberValid
       }, true)
       // if any of the others aren't valid, this one needs to be
@@ -81,12 +85,19 @@ export default class Validator extends React.Component {
       console.log(`fieldRules for ${fieldName} at 81: ${fieldRules}`)
     }
 
+    const validateGroup = (fieldName, fieldValue) => {
+      const currentField = this.state.fields[fieldName]
+      const group = this.state.fields.filter(
+        field => typeof field.required === 'string' && field.required === currentField.required
+      )
+      
+    }
+
     const isFormValid = fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
 
       this.updateErrors(validation, fieldName, rule.error)
-      
       return accumulator && validation
     }, true)
 
