@@ -85,23 +85,6 @@ export default class Validator extends React.Component {
       console.log(`fieldRules for ${fieldName} at 81: ${fieldRules}`)
     }
 
-    const validateGroup = (fieldName, fieldValue) => {
-      const currentField = this.state.fields[fieldName]
-      const group = this.state.fields.filter(
-        field => typeof field.required === 'string' && field.required === currentField.required
-      )
-
-      const isCurrentFieldValid = fieldRules.reduce((accumulator, fieldRule) => {
-        const rule = defaultRules[fieldRule] || fieldRule
-        const validation = rule.validator(fieldValue)
-        this.updateErrors(validation, fieldName, rule.error)
-        return accumulator && validation
-      }, true)
-      console.log(group)
-      if (isCurrentFieldValid)
-        this.setState({ validation: Object.assign(this.state.validation, { [field.required]: true }) })
-    }
-
     const isFormValid = fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
@@ -114,6 +97,23 @@ export default class Validator extends React.Component {
       validation: Object.assign(this.state.validation, { [fieldName]: isFormValid })
     })
     return isFormValid
+  }
+
+  validateGroup = (fieldName, fieldValue) => {
+    const currentField = this.state.fields[fieldName]
+    const group = this.state.fields.filter(
+      field => typeof field.required === 'string' && field.required === currentField.required
+    )
+
+    const isCurrentFieldValid = fieldRules.reduce((accumulator, fieldRule) => {
+      const rule = defaultRules[fieldRule] || fieldRule
+      const validation = rule.validator(fieldValue)
+      this.updateErrors(validation, fieldName, rule.error)
+      return accumulator && validation
+    }, true)
+    console.log(group)
+    if (isCurrentFieldValid)
+      this.setState({ validation: Object.assign(this.state.validation, { [currentField.required]: true }) })
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
