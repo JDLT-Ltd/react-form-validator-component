@@ -22,12 +22,16 @@ class App extends React.Component {
   fields = {
     emailAddresses: {
       name: 'emailAddresses',
-      rules: ['isEmailArray', 'isRequired'],
+      rules: ['isEmailArray'],
+      required: 'group',
+      group: 'test',
       label: 'Email addresses'
     },
     something: {
       name: 'something',
-      rules: ['isRequired'],
+      rules: ['isEmailArray'],
+      required: 'group',
+      group: 'test',
       label: 'Something'
     }
   }
@@ -69,7 +73,6 @@ class App extends React.Component {
               <Form>
                 {fields &&
                   fields.map((input, i) => {
-                    console.log(input)
                     return (
                       <div key={i}>
                         <label>{input.value.label}</label>

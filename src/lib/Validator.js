@@ -57,13 +57,36 @@ export default class Validator extends React.Component {
   }
 
   validateField = (fieldName, fieldValue) => {
-    const fieldRules = this.state.fields[fieldName].rules
+    const field = this.state.fields[fieldName]
+    let fieldRules = [...field.rules]
+    console.log(`fieldRules for ${fieldName} at 62: ${fieldRules}`)
+    // get 'required' value
+    const isRequired = field.required
+    // if false, make sure 'isRequired' isn't in rules, so that the required property always takes precedence
+    if (isRequired === false) fieldRules = [...fieldRules.fiter(r => r !== 'isRequired')]
+    console.log(`fieldRules for ${fieldName} at 67: ${fieldRules}`)
+    // if true, add 'isRequired' to rules, which will be fetched from defaultRules
+    if (isRequired === true) fieldRules = [...fieldRules, 'isRequired']
+    console.log(`fieldRules for ${fieldName} at 70: ${fieldRules}`)
+    // if group, check whether the rest of the group are already valid
+    if (isRequired === 'group') {
+      const group = field.group
+      const groupFields = Object.values(this.state.fields).filter(f => f.group === group)
+      const othersValid = groupFields.reduce((accumulator, groupMember) => {
+        const isGroupMemberValid = !!this.state.validation[groupMember]
+        return accumulator && isGroupMemberValid
+      }, true)
+      // if any of the others aren't valid, this one needs to be
+      if (!othersValid) fieldRules = [...fieldRules, 'isRequired']
+      console.log(`fieldRules for ${fieldName} at 81: ${fieldRules}`)
+    }
+
     const isFormValid = fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
 
       this.updateErrors(validation, fieldName, rule.error)
-
+      
       return accumulator && validation
     }, true)
 
