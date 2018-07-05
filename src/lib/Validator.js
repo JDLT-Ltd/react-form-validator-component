@@ -90,7 +90,16 @@ export default class Validator extends React.Component {
       const group = this.state.fields.filter(
         field => typeof field.required === 'string' && field.required === currentField.required
       )
-      
+
+      const isCurrentFieldValid = fieldRules.reduce((accumulator, fieldRule) => {
+        const rule = defaultRules[fieldRule] || fieldRule
+        const validation = rule.validator(fieldValue)
+        this.updateErrors(validation, fieldName, rule.error)
+        return accumulator && validation
+      }, true)
+      console.log(group)
+      if (isCurrentFieldValid)
+        this.setState({ validation: Object.assign(this.state.validation, { [field.required]: true }) })
     }
 
     const isFormValid = fieldRules.reduce((accumulator, fieldRule) => {
@@ -110,10 +119,18 @@ export default class Validator extends React.Component {
   validateFieldAndUpdateState(fieldName, fieldValue) {
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
-    if (this.validateField(fieldName, fieldValue)) {
-      onValidate(fieldName, fieldValue)
+    if (typeof this.props.fields[fieldName].required === 'string') {
+      if (this.validateGroup(fieldName, fieldValue)) {
+        onValidate(fieldName, fieldValue)
+      } else {
+        onValidate(fieldName, null)
+      }
     } else {
-      onValidate(fieldName, null)
+      if (this.validateField(fieldName, fieldValue)) {
+        onValidate(fieldName, fieldValue)
+      } else {
+        onValidate(fieldName, null)
+      }
     }
 
     this.setState({
