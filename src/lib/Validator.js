@@ -16,7 +16,7 @@ export default class Validator extends React.Component {
         //check for groups before adding fields to validation
         const fieldValue = props.fields[currentValue]
         if (fieldValue.required && typeof fieldValue.required === 'string') {
-          accumulator[fieldValue.required] = fieldValue.rules && fieldValue.rules.length > 0 ? false : true
+          accumulator[fieldValue.required] = false
           return accumulator
         } else {
           accumulator[currentValue] = fieldValue.rules && fieldValue.rules.length > 0 ? false : true
