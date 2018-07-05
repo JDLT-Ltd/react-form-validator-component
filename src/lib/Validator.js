@@ -62,9 +62,8 @@ export default class Validator extends React.Component {
     } else this.removeError(fieldName, errorMessage)
   }
 
-  validateField = (fieldName, fieldValue) => {
-    const fieldRules = this.state.fields[fieldName].rules
-    const isFieldValid = fieldRules.reduce((accumulator, fieldRule) => {
+  validateRules = (fieldName, fieldValue, fieldRules) => {
+    return fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
 
@@ -72,7 +71,13 @@ export default class Validator extends React.Component {
 
       return accumulator && validation
     }, true)
+  }
 
+  validateField = (fieldName, fieldValue) => {
+    const fieldRules = this.state.fields[fieldName].rules
+    const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
+
+    console.log(isFieldValid)
     this.setState({
       validation: Object.assign(this.state.validation, { [fieldName]: isFieldValid })
     })
