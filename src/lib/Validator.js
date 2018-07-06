@@ -43,7 +43,7 @@ export default class Validator extends React.Component {
   // merge value with current property on state
   addToStateProperty = (target, value) => {
     this.setState({
-      [this.state[target]]: Object.assign(this.state[target], value)
+      [target]: Object.assign(this.state[target], value)
     })
   }
 
@@ -52,6 +52,11 @@ export default class Validator extends React.Component {
     const messagePosition = errorArray.indexOf(errorMessage)
     if (messagePosition > -1) errorArray.splice(messagePosition, 1)
     this.addToStateProperty('errors', { [fieldName]: errorArray })
+  }
+
+  removeAllErrors = fieldName => {
+    console.log('removing all errors')
+    this.setState({ errors: Object.assign(this.state.errors, { [fieldName]: [] }) }, () => console.log('error removed'))
   }
 
   updateErrorsForField = (validation, fieldName, errorMessage) => {
@@ -63,6 +68,10 @@ export default class Validator extends React.Component {
   }
 
   validateRules = (fieldName, fieldValue, fieldRules) => {
+    if (!fieldRules.includes('isRequired') && fieldValue === '') {
+      this.removeAllErrors(fieldName)
+      return true
+    }
     return fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
