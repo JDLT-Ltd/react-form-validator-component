@@ -1,16 +1,50 @@
 # React Form Validator
 
-React Form Validator exposes a single React component which uses the render prop pattern to validate the input on its child form.
+React Form Validator exposes a single React component which uses the render prop pattern to validate the input on its child form.   
+It is built as a pure React component, with no additional dependencies, making it efficient and cheap to add to any React project. Due to interacting with underlying basic HTML tags, it is compatible with popular design Frameworks like Semantic or Bootstrap out of the box.
+<!-- 
+The render prop function will be passed `isFormValid`, `isFieldValid`, `errors`, `fields`, and `onChange` to use in the form itself. -->
 
-The render prop function will be passed `isFormValid`, `isFieldValid`, `errors`, `fields`, and `onChange` to use in the form itself.
+## Table of Contents
+
+
+[**Installation**](#installation)
+  * [**1.1 - Using NPM/YARN**](#npm/yarn)
+  * [**1.2 - Clone the repo**](#clone)
+
+
+  [**Usage**](#Usage)
+  * [**2.1 - Example**](#example)
+  * [**2.2 - Props in RFVC**](#props-in-rfvc)
+    * [**2.2.1 - Required props**](#required-props)
+    * [**2.2.2 - Optional props**](#optional-props)
+  * [**2.3 - Rules in RFVC**](#rules-in-rfvc)
+    * [**2.3.1 - Default rules**](#default-rules)
+    * [**2.3.2 - Custom rules**](#custom-rules)
+  * [**2.4 - Arguments in RFVC**](#arguments)
+
+
+[**Project Motivation**](#project-motivation)
+
+**Additional Info**
+  * [**Current Goals**](#current-goals)
+  * [**Changelog**](#changelog)
+  * [**License**](#license)
 
 ## Installation
 
+### NPM/YARN
 `yarn add react-validator-component`
 
 `import { Validator } from 'react-validator-component'`
 
-## Example
+### Clone
+
+`git clone git@github.com:JDLT-Ltd/react-form-validator-component.git`
+
+## Usage
+
+### Example
 
 ```javascript
 class ExampleForm extends React.Component {
@@ -47,14 +81,15 @@ class ExampleForm extends React.Component {
 }
 ```
 
-## Usage
+### Props in RFVC
 
-### Props
+#### Required props
 
 `Validator` has one **required** props  
   * `fields` - an object with one property per input field  
 The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules.
   
+#### Optional Props
 
 It also has three **optional** props
 
@@ -68,7 +103,11 @@ It also has three **optional** props
   * `validateOnLoad` - a boolean  
   If `validateOnLoad` is true, `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (empty fields will not dsiplay errors - however they will prevent set isFormValid to false)
  
-#### Using predefined rules
+### Rules in RFVC
+
+RFVC let's you use a mixture of predefined rules and your personal custom rules, just as it let's you provide your own functionality for `onPassValidation`.
+
+#### Default Rules
 
 ```javascript
 fields: {
@@ -78,7 +117,9 @@ fields: {
 }
 ```
 
-#### Using custom rules
+We are currently still working on creating a comprehensive list of default rules, please check `src/lib/rules.js` for now.
+
+#### Custom Rules
 
 ```javascript
 fields: {
@@ -94,6 +135,14 @@ fields: {
       }
     ]
   }
+}
+```
+
+You can write custom rules and simply use them inside the rules Array as long as they follow RFVC's format of
+```javascript
+{
+  validator: {Your Code},
+  error: {Your Error Message}  
 }
 ```
 
