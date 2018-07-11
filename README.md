@@ -101,7 +101,8 @@ It also has three **optional** props
  **You need to provide at least one of `parent` or `onValidate`**
  
   * `validateOnLoad` - a boolean  
-  If `validateOnLoad` is true, `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (empty fields will not dsiplay errors - however they will prevent set isFormValid to false)
+  By defautl `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (empty fields will not dsiplay errors - however they will prevent set isFormValid to false).  
+  If you want to avoid validation running on load, simply set the value to false.
  
 ### Rules in RFVC
 

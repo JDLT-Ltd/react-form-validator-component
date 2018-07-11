@@ -12,6 +12,7 @@ const isRequired = {
   },
   error: 'Please provide a value'
 }
+
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -28,8 +29,19 @@ class App extends React.Component {
     something: {
       name: 'something',
       rules: ['isPhoneNumber'],
+      required: true,
       label: 'Something'
     }
+  }
+
+  renderErrors(errors) {
+    return errors.map((error, i) => {
+      return (
+        <Label color="red" key={i}>
+          {error}
+        </Label>
+      )
+    })
   }
 
   render() {
@@ -44,16 +56,12 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} />
-                  {errors.emailAddresses.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.emailAddresses)}
                 </Form.Field>
                 <Form.Field>
                   <label>Something</label>
                   <Input name="something" onChange={onChange} />
-                  {errors.something.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.something)}
                 </Form.Field>
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
@@ -73,9 +81,7 @@ class App extends React.Component {
                       <div key={i}>
                         <label>{input.value.label}</label>
                         <input name={input.value.name} onChange={onChange} />
-                        {errors[input.value.name].map((error, i) => {
-                          return <label key={i}>{error}</label>
-                        })}
+                        {this.renderErrors(errors[input.value.name])}
                       </div>
                     )
                   })}
@@ -94,9 +100,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} />
-                  {errors.emailAddresses.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.emailAddresses)}
                 </Form.Field>
                 <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
                   Thats an Email!
@@ -104,9 +108,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Something</label>
                   <Input name="something" onChange={onChange} />
-                  {errors.something.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.something)}
                 </Form.Field>
                 <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
                   Its not nothing
@@ -126,9 +128,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} value={'I_DONT_WORK'} />
-                  {errors.emailAddresses.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.emailAddresses)}
                 </Form.Field>
                 <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
                   Thats an Email!
@@ -136,9 +136,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Something</label>
                   <Input name="something" onChange={onChange} defaultValue={''} />
-                  {errors.something.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.something)}
                 </Form.Field>
                 <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
                   Its not nothing
@@ -162,9 +160,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} />
-                  {errors.emailAddresses.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.emailAddresses)}
                 </Form.Field>
                 <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
                   Thats an Email!
@@ -172,9 +168,7 @@ class App extends React.Component {
                 <Form.Field>
                   <label>Something</label>
                   <Input name="something" onChange={onChange} />
-                  {errors.something.map((error, i) => {
-                    return <Label key={i}>{error}</Label>
-                  })}
+                  {this.renderErrors(errors.something)}
                 </Form.Field>
                 <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
                   Its not nothing

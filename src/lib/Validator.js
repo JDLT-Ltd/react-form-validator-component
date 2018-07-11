@@ -55,8 +55,7 @@ export default class Validator extends React.Component {
   }
 
   removeAllErrors = fieldName => {
-    console.log('removing all errors')
-    this.setState({ errors: Object.assign(this.state.errors, { [fieldName]: [] }) }, () => console.log('error removed'))
+    this.setState({ errors: Object.assign(this.state.errors, { [fieldName]: [] }) })
   }
 
   updateErrorsForField = (validation, fieldName, errorMessage) => {
@@ -68,10 +67,6 @@ export default class Validator extends React.Component {
   }
 
   validateRules = (fieldName, fieldValue, fieldRules) => {
-    if (!fieldRules.includes('isRequired') && fieldValue === '') {
-      this.removeAllErrors(fieldName)
-      return true
-    }
     return fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
@@ -83,10 +78,15 @@ export default class Validator extends React.Component {
   }
 
   validateField = (fieldName, fieldValue) => {
+    if (!this.props.fields[fieldName].required && fieldValue.length === 0) {
+      this.setState({
+        validation: Object.assign(this.state.validation, { [fieldName]: true })
+      })
+      return true
+    }
     const fieldRules = this.state.fields[fieldName].rules
     const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
-    console.log(isFieldValid)
     this.setState({
       validation: Object.assign(this.state.validation, { [fieldName]: isFieldValid })
     })
@@ -142,11 +142,13 @@ export default class Validator extends React.Component {
 
   validateFormAndUpdateState = () => {
     const fieldNames = Object.values(this.props.fields).map(field => field.name)
-
     fieldNames.forEach(fieldName => {
-      const fieldValue = document.getElementsByName(fieldName)[0] ? document.getElementsByName(fieldName)[0].value : ''
+      let fieldValue =
+        document.getElementsByName(fieldName)[0] && document.getElementsByName(fieldName)[0].value
+          ? document.getElementsByName(fieldName)[0].value
+          : ''
 
-      if (fieldValue) this.validateFieldAndUpdateState(fieldName, fieldValue)
+      this.validateFieldAndUpdateState(fieldName, fieldValue)
     })
   }
 
@@ -155,7 +157,8 @@ export default class Validator extends React.Component {
   }
 
   componentDidMount() {
-    if (this.props.validateOnLoad) this.validateFormAndUpdateState()
+    this.validateFormAndUpdateState()
+    if (this.props.validateOnLoad) Object.values(this.props.fields).map(field => this.removeAllErrors(field.name))
   }
 
   render() {
@@ -176,4 +179,8 @@ Validator.propTypes = {
   onValidate: PropTypes.func,
   fields: PropTypes.object,
   validateOnLoad: PropTypes.bool
+}
+
+Validator.defaultProps = {
+  validateOnLoad: true
 }
