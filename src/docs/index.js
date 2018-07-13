@@ -24,12 +24,13 @@ class App extends React.Component {
     emailAddresses: {
       name: 'emailAddresses',
       rules: ['isEmailArray'],
+      required: 'test',
       label: 'Email addresses'
     },
     something: {
       name: 'something',
       rules: ['isPhoneNumber'],
-      required: true,
+      required: 'test',
       label: 'Something'
     }
   }
@@ -70,7 +71,7 @@ class App extends React.Component {
             )
           }}
         </Validator>
-        <Header as={'h2'}>Basic Validation using fields to map (and no semantic-ui)</Header>
+        {/* <Header as={'h2'}>Basic Validation using fields to map (and no semantic-ui)</Header>
         <Validator fields={this.fields} parent={this}>
           {({ isFormValid, fields, onChange, errors }) => {
             return (
@@ -179,7 +180,7 @@ class App extends React.Component {
               </Form>
             )
           }}
-        </Validator>
+        </Validator> */}
       </Container>
     )
   }
