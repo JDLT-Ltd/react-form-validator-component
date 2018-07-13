@@ -22,6 +22,8 @@ The render prop function will be passed `isFormValid`, `isFieldValid`, `errors`,
     * [**2.3.1 - Default rules**](#default-rules)
     * [**2.3.2 - Custom rules**](#custom-rules)
   * [**2.4 - Arguments in RFVC**](#arguments)
+  * [**2.5 - Other options**](#other-options)
+      * [**2.5.1 - Group Validation**](#group-validation)
 
 
 [**Project Motivation**](#project-motivation)
@@ -200,3 +202,29 @@ fields: {
 
 `Validator` will also provide an `errors` object, which contains a key for each validated input, the value of which is an array containing all applicable errors.
 These can be displayed as a group or be mapped in order to produce individual error labels.
+
+### Other Options
+
+#### Group Validation
+
+RFVC supports group validation, where only one member of a group needs to pass it's validation in order for the whole group to be validated.  
+In order to use group validation, simply replace the value of the required key on fields with the groupname.
+
+i.e.
+
+```javascript
+fields = {
+    emailAddresses: {
+      name: 'emailAddresses',
+      rules: ['isEmailArray'],
+      required: 'test',
+      label: 'Email addresses'
+    },
+    something: {
+      name: 'something',
+      rules: ['isPhoneNumber'],
+      required: 'test',
+      label: 'Something'
+    }
+}
+```
