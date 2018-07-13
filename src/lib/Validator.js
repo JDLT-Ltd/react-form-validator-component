@@ -79,9 +79,12 @@ export default class Validator extends React.Component {
 
   validateField = (fieldName, fieldValue) => {
     if (!this.props.fields[fieldName].required && fieldValue.length === 0) {
-      this.setState({
-        validation: Object.assign(this.state.validation, { [fieldName]: true })
-      })
+      this.setState(
+        {
+          validation: Object.assign(this.state.validation, { [fieldName]: true })
+        },
+        () => this.removeAllErrors(fieldName)
+      )
       return true
     }
     const fieldRules = this.state.fields[fieldName].rules
@@ -104,18 +107,6 @@ export default class Validator extends React.Component {
           return accumulator && validation
         }, true)
     )
-
-  validateGroup = (fieldName, fieldValue) => {
-    const currentField = this.state.fields[fieldName]
-    const group = Object.values(this.state.fields).filter(field => field.required === currentField.required)
-
-    this.setState({ validation: Object.assign(this.state.validation, { [currentField.required]: false }) })
-
-    const isGroupValid = this.checkGroupValid(group, fieldName, fieldValue)
-    if (isGroupValid)
-      this.setState({ validation: Object.assign(this.state.validation, { [currentField.required]: true }) })
-    return isGroupValid
-  }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
