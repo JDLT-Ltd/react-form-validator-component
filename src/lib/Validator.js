@@ -188,7 +188,16 @@ export default class Validator extends React.Component {
     this.validateFieldAndUpdateState(e.target.name, e.target.value)
   }
 
+  validateFieldsInput = () => {
+    this.props.fields.forEach(field => {
+      if (!field.name) throw new Error('Please provide a name value for all of your fields')
+      if (!field.rules)
+        throw new Error('Please provide a rules array for each field (or an empty array for non-validated fields)')
+    })
+  }
+
   componentDidMount() {
+    this.validateFieldsInput()
     this.validateFormAndUpdateState()
     if (this.props.validateOnLoad) Object.values(this.props.fields).map(field => this.removeAllErrors(field.name))
   }
