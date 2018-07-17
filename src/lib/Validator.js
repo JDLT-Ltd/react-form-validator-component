@@ -176,12 +176,13 @@ export default class Validator extends React.Component {
 
   validateFormAndUpdateState = () => {
     const fieldNames = Object.values(this.props.fields).map(field => field.name)
+    console.log('inside validateForm')
     fieldNames.forEach(fieldName => {
       let fieldValue =
         document.getElementsByName(fieldName)[0] && document.getElementsByName(fieldName)[0].value
           ? document.getElementsByName(fieldName)[0].value
           : ''
-
+      console.log('validating', fieldName)
       this.validateFieldAndUpdateState(fieldName, fieldValue)
     })
   }
