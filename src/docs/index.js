@@ -23,7 +23,7 @@ class App extends React.Component {
   fields = {
     emailAddresses: {
       name: 'emailAddresses',
-      rules: ['isEmailArray', 'isRequired'],
+      rules: [],
       required: true,
       label: 'Email addresses'
     }

@@ -196,6 +196,16 @@ export default class Validator extends React.Component {
 
   componentDidMount() {
     this.validateFieldsInput()
+    // Add isRequired rule is field is required and not in a group
+    Object.values(this.state.fields).forEach(field => {
+      console.log('checking required for ', field.name)
+      if (field.required === true) {
+        const newFields = this.state.fields
+        newFields[field.name].rules.push('isRequired')
+        this.setState({ fields: newFields })
+      }
+      console.log(field.required === true)
+    })
     this.validateFormAndUpdateState()
     if (this.props.validateOnLoad) Object.values(this.state.fields).map(field => this.removeAllErrors(field.name))
   }
