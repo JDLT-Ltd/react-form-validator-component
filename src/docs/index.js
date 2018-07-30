@@ -23,27 +23,9 @@ class App extends React.Component {
   fields = {
     emailAddresses: {
       name: 'emailAddresses',
-      rules: ['isEmailArray'],
-      required: 'test',
+      rules: ['isEmailArray', 'isRequired'],
+      required: true,
       label: 'Email addresses'
-    },
-    something: {
-      name: 'something',
-      rules: ['isPhoneNumber'],
-      required: 'test',
-      label: 'Something'
-    },
-    number: {
-      name: 'number',
-      rules: ['isNumeric'],
-      required: 'group2',
-      label: 'number'
-    },
-    name: {
-      name: 'name',
-      rules: ['isFullName'],
-      required: 'group2',
-      label: 'name'
     }
   }
 
@@ -70,21 +52,6 @@ class App extends React.Component {
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} />
                   {this.renderErrors(errors.emailAddresses)}
-                </Form.Field>
-                <Form.Field>
-                  <label>Something</label>
-                  <Input name="something" onChange={onChange} />
-                  {this.renderErrors(errors.something)}
-                </Form.Field>
-                <Form.Field>
-                  <label>Group 2 Number</label>
-                  <Input name="number" onChange={onChange} />
-                  {this.renderErrors(errors.number)}
-                </Form.Field>
-                <Form.Field>
-                  <label>Group 2 Name</label>
-                  <Input name="name" onChange={onChange} />
-                  {this.renderErrors(errors.name)}
                 </Form.Field>
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
