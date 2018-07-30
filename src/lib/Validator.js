@@ -156,6 +156,7 @@ export default class Validator extends React.Component {
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
+    console.log('fields: ', this.state.fields, 'fieldName: ', fieldName, 'fieldValue: ', fieldValue)
     const onValidate = this.state.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
@@ -182,8 +183,11 @@ export default class Validator extends React.Component {
     })
   }
 
-  onChange = e => {
-    this.validateFieldAndUpdateState(e.target.name, e.target.value)
+  onChange = (e, d) => {
+    console.log('e: ', e)
+    console.log('d: ', d)
+    const changeEvent = d ? d : e.target
+    this.validateFieldAndUpdateState(changeEvent.name, changeEvent.value)
   }
 
   validateFieldsInput = () => {

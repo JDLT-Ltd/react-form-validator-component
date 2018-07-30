@@ -1,6 +1,6 @@
 import React from 'react'
 import reactDOM from 'react-dom'
-import { Form, Header, Label, Input, Container, Button } from 'semantic-ui-react'
+import { Form, Header, Label, Input, Container, Button, Dropdown } from 'semantic-ui-react'
 
 import { Validator } from '../lib/index'
 
@@ -23,9 +23,15 @@ class App extends React.Component {
   fields = {
     emailAddresses: {
       name: 'emailAddresses',
-      rules: [],
+      rules: ['isEmail'],
       required: true,
       label: 'Email addresses'
+    },
+    dropdown: {
+      name: 'dropdown',
+      rules: [],
+      required: true,
+      label: 'dropdown'
     }
   }
 
@@ -52,6 +58,16 @@ class App extends React.Component {
                   <label>Your Emails</label>
                   <Input name="emailAddresses" onChange={onChange} />
                   {this.renderErrors(errors.emailAddresses)}
+                </Form.Field>
+                <Form.Field>
+                  <label>dropdown</label>
+                  <Form.Dropdown
+                    selection
+                    name="dropdown"
+                    onChange={onChange}
+                    options={[{ text: 'Option A', value: 'A' }, { text: 'Option B', value: 'B' }]}
+                  />
+                  {this.renderErrors(errors.dropdown)}
                 </Form.Field>
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
