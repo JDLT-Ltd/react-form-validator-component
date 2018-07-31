@@ -42,7 +42,6 @@ export default class Validator extends React.Component {
   }
 
   toArray = object => {
-    console.log('object is: ', object)
     return Object.entries(object).reduce((accumulator, [key, value]) => {
       return accumulator.concat({
         key,

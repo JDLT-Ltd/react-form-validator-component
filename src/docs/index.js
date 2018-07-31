@@ -1,6 +1,6 @@
 import React from 'react'
 import reactDOM from 'react-dom'
-import { Form, Header, Label, Input, Container, Button, Dropdown, Modal } from 'semantic-ui-react'
+import { Form, Header, Label, Input, Container, Button, Dropdown, Modal, Checkbox } from 'semantic-ui-react'
 
 import { Validator } from '../lib/index'
 
@@ -220,11 +220,14 @@ class App extends React.Component {
                           {/* {this.renderErrors(errors.tenantId)} */}
                         </Form.Field>
                         <Form.Field width="5">
-                          <Form.Input
+                          <Checkbox
                             name="importExisting"
                             label="Import existing instances"
-                            type="checkbox"
-                            onChange={onChange}
+                            // type="checkbox"
+                            // onChange={onChange}
+                            onClick={e => {
+                              onChange({ target: { name: 'importExisting', value: !this.state.importExisting } })
+                            }}
                           />
                           {/* {this.renderErrors(errors.importExisting)} */}
                         </Form.Field>
