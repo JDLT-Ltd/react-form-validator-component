@@ -17,7 +17,7 @@ class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {}
+    this.state = { one: 1 }
   }
 
   fields = {
@@ -50,7 +50,8 @@ class App extends React.Component {
       <Container>
         <Header as="h1">Examples for using RFVC</Header>
         <Header as="h2">Basic Validation</Header>
-        <Validator fields={this.fields} parent={this}>
+        <button onClick={() => this.setState({ one: this.state.one + 1 })}>clicky click</button>
+        <Validator test={this.state.one} fields={this.fields} parent={this}>
           {({ isFormValid, onChange, errors }) => {
             return (
               <Form>
