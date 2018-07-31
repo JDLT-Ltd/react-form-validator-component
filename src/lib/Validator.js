@@ -5,7 +5,6 @@ import * as defaultRules from './rules'
 export default class Validator extends React.Component {
   constructor(props) {
     super(props)
-    console.log('props: ', props)
     this.state = {
       errors: Object.keys(props.fields).reduce((accumulator, currentValue) => {
         accumulator[currentValue] = []
@@ -43,7 +42,7 @@ export default class Validator extends React.Component {
   }
 
   toArray = object => {
-    console.log('object, ', object)
+    console.log('object is: ', object)
     return Object.entries(object).reduce((accumulator, [key, value]) => {
       return accumulator.concat({
         key,
@@ -209,11 +208,12 @@ export default class Validator extends React.Component {
   }
 
   render() {
+    console.log('this.props here is :', this.props)
     const { errors, isFormValid, validation } = this.state
     return this.props.children({
       isFormValid,
       isFieldValid: validation,
-      fields: this.toArray(this.props.fields),
+      fields: this.toArray(this.props.fields || {}),
       onChange: this.onChange,
       errors
     })
