@@ -43,6 +43,7 @@ export default class Validator extends React.Component {
   }
 
   toArray = object => {
+    console.log('object, ', object)
     return Object.entries(object).reduce((accumulator, [key, value]) => {
       return accumulator.concat({
         key,
@@ -208,11 +209,11 @@ export default class Validator extends React.Component {
   }
 
   render() {
-    const { fields, errors, isFormValid, validation } = this.state
+    const { errors, isFormValid, validation } = this.state
     return this.props.children({
       isFormValid,
       isFieldValid: validation,
-      fields: this.toArray(fields),
+      fields: this.toArray(this.props.fields),
       onChange: this.onChange,
       errors
     })
