@@ -50,8 +50,8 @@ const fields = {
       rules: [],
       required: true
     },
-    zoneType: {
-      name: 'zoneType',
+    importExisting: {
+      name: 'importExisting',
       rules: [],
       required: true
     }
@@ -69,11 +69,6 @@ const fields = {
     },
     clientSecret: {
       name: 'clientSecret',
-      rules: [],
-      required: true
-    },
-    accessKey: {
-      name: 'accessKey',
       rules: [],
       required: true
     },
@@ -99,11 +94,6 @@ const fields = {
     },
     friendlyName: {
       name: 'friendlyName',
-      rules: [],
-      required: true
-    },
-    zoneType: {
-      name: 'zoneType',
       rules: [],
       required: true
     }
@@ -160,7 +150,16 @@ class App extends React.Component {
                         label="Cloud provider"
                         selection
                         placeholder={'Select a provider'}
-                        options={providerOptions}
+                        options={[
+                          {
+                            text: 'AWS',
+                            value: 'amazon'
+                          },
+                          {
+                            text: 'Azure',
+                            value: 'azure'
+                          }
+                        ]}
                         onChange={onChange}
                       />
                     </Form.Field>
