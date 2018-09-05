@@ -16,7 +16,7 @@ const isRequired = {
     if (((data.isArray() && data.length > 0) || data) || data === false) return true
     return false
   },
-  error: 'Please provide a value'
+  error: 'Please provide a value.'
 }
 
 const isFullName = {
