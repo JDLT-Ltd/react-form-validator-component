@@ -13,7 +13,7 @@ const urlRegex = /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9
 
 const isRequired = {
   validator: data => {
-    if (((data.isArray() && data.length > 0) || data) || data === false) return true
+    if (((data.isArray() && data.length > 0) && data) || data === false) return true
     return false
   },
   error: 'Please provide a value.'
