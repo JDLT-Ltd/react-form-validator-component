@@ -1,6 +1,6 @@
 {
   "name": "react-form-validator-component",
-  "version": "1.6.1",
+  "version": "1.6.2",
   "main": "build/lib/index.js",
   "repository": "git@github.com:JDLT-Ltd/react-form-validator-component.git",
   "author": "Gary Holland <garyhollandxyz@gmail.com>, Fabian Feldberg <monsagri@gmail.com>",
