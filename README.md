@@ -89,7 +89,7 @@ class ExampleForm extends React.Component {
 
 `Validator` has one **required** props  
   * `fields` - an object with one property per input field  
-The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules.
+The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules. You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes. E.g. `semantic-ui-react`'s `DropDown` component. In that case, the Validator's default method of checking values on load will fail.
   
 #### Optional Props
 

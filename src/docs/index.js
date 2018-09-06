@@ -1,130 +1,69 @@
 import React from 'react'
 import reactDOM from 'react-dom'
-import { Form, Header, Label, Input, Container, Button, Dropdown, Modal, Checkbox } from 'semantic-ui-react'
+import { Form, Header, Label, Container, Button, Dropdown } from 'semantic-ui-react'
 
 import { Validator } from '../lib/index'
 
 //this is a custom rule
-const providerOptions = [
+// const isRequired = {
+//   validator: data => {
+//     if (data) return true
+//     return false
+//   },
+//   error: 'Please provide a value'
+// }
+const options = [
   {
-    text: 'AWS',
-    value: 'amazon'
+    text: 'option 1',
+    value: 1
   },
   {
-    text: 'Azure',
-    value: 'azure'
+    text: 'option 2',
+    value: 2
   }
 ]
-
-const fields = {
-  none: {
-    cloudProvider: {
-      name: 'cloudProvider',
-      rules: [],
-      required: true
-    }
-  },
-  amazon: {
-    cloudProvider: {
-      name: 'cloudProvider',
-      rules: [],
-      required: true
-    },
-    accessKey: {
-      name: 'accessKey',
-      rules: [],
-      required: true
-    },
-    secretKey: {
-      name: 'secretKey',
-      rules: [],
-      required: true
-    },
-    endpoint: {
-      name: 'endpoint',
-      rules: [],
-      required: true
-    },
-    friendlyName: {
-      name: 'friendlyName',
-      rules: [],
-      required: true
-    },
-    importExisting: {
-      name: 'importExisting',
-      rules: [],
-      required: true
-    }
-  },
-  azure: {
-    cloudProvider: {
-      name: 'cloudProvider',
-      rules: [],
-      required: true
-    },
-    clientId: {
-      name: 'clientId',
-      rules: [],
-      required: true
-    },
-    clientSecret: {
-      name: 'clientSecret',
-      rules: [],
-      required: true
-    },
-    regionCode: {
-      name: 'regionCode',
-      rules: [],
-      required: true
-    },
-    subscriberId: {
-      name: 'subscriberId',
-      rules: [],
-      required: true
-    },
-    tenantId: {
-      name: 'tenantId',
-      rules: [],
-      required: true
-    },
-    importExisting: {
-      name: 'importExisting',
-      rules: [],
-      required: true
-    },
-    friendlyName: {
-      name: 'friendlyName',
-      rules: [],
-      required: true
-    }
-  }
-}
-
-// const BIND_CLOUD = gql`
-//   mutation bindCloud($zoneType: String!, $friendlyName: String!, $config: MorpheusCloudConfig) {
-//     bindCloud(zoneType: $zoneType, friendlyName: $friendlyName, config: $config) {
-//       id
-//     }
-//   }
-// `
-
 class App extends React.Component {
   constructor(props) {
     super(props)
 
-    this.state = {
-      cloudProvider: 'amazon'
+    this.state = {}
+  }
+
+  fields = {
+    // emailAddresses: {
+    //   name: 'emailAddresses',
+    //   rules: ['isEmailArray'],
+    //   required: true,
+    //   label: 'Email addresses'
+    // },
+    // something: {
+    //   name: 'something',
+    //   rules: ['isPhoneNumber'],
+    //   required: 'test',
+    //   label: 'Something'
+    // },
+    // number: {
+    //   name: 'number',
+    //   rules: ['isNumeric'],
+    //   required: 'group2',
+    //   label: 'number'
+    // },
+    // name: {
+    //   name: 'name',
+    //   rules: ['isFullName'],
+    //   required: 'group2',
+    //   label: 'name'
+    // },
+    sources: {
+      rules: [],
+      name: 'sources',
+      required: true,
+      label: 'sources',
+      defaultValue: [options[0].value]
     }
-
-    this.onDropdownChange = this.onDropdownChange.bind(this)
   }
 
-  onDropdownChange(event, data) {
-    this.setState({ cloudProvider: data.value })
-  }
-
-  renderErrors = errors => {
-    if (!errors) return
+  renderErrors(errors) {
     return errors.map((error, i) => {
       return (
         <Label color="red" key={i}>
@@ -137,151 +76,141 @@ class App extends React.Component {
   render() {
     return (
       <Container>
-        <Modal trigger={<Button color="blue">Bind cloud</Button>}>
-          <Modal.Content>
-            <Header as="h2">Bind cloud</Header>
-            <Validator parent={this} fields={fields[this.state.cloudProvider] || fields.none} validateOnLoad={false}>
-              {({ isFormValid, isFieldValid, errors, onChange }) => {
-                return (
-                  <Form>
-                    <Form.Field width="5">
-                      <Form.Dropdown
-                        name="cloudProvider"
-                        label="Cloud provider"
-                        selection
-                        placeholder={'Select a provider'}
-                        options={[
-                          {
-                            text: 'AWS',
-                            value: 'amazon'
-                          },
-                          {
-                            text: 'Azure',
-                            value: 'azure'
-                          }
-                        ]}
-                        onChange={onChange}
-                      />
-                    </Form.Field>
-                    {/* {this.renderErrors(errors.cloudProvider)} */}
-                    <Form.Field width="5">
-                      <Form.Input name="friendlyName" label="Friendly name" onChange={onChange} />
-                      {/* {this.renderErrors(errors.friendlyName)} */}
-                    </Form.Field>
-
-                    {this.state.cloudProvider === 'amazon' && (
-                      <React.Fragment>
-                        <Form.Field width="5">
-                          <Form.Input name="accessKey" label="Access key" onChange={onChange} />
-                          {/* {this.renderErrors(errors.accessKey)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input name="secretKey" label="Secret key" onChange={onChange} type="password" />
-                          {/* {this.renderErrors(errors.secretKey)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Select
-                            name="endpoint"
-                            label="Endpoint"
-                            selection
-                            placeholder={'Select an endpoint'}
-                            options={[{ text: 'Option A', value: 'A' }, { text: 'Option B', value: 'B' }]}
-                            onChange={onChange}
-                          />
-                          {/* {this.renderErrors(errors.endpoint)} */}
-                        </Form.Field>
-                      </React.Fragment>
-                    )}
-                    {this.state.cloudProvider === 'azure' && (
-                      <React.Fragment>
-                        <Form.Field width="5">
-                          <Form.Input name="accessKey" label="Access key" onChange={onChange} />
-                          {/* {this.renderErrors(errors.accessKey)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input name="clientId" label="Client ID" onChange={onChange} />
-                          {/* {this.renderErrors(errors.clientId)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input name="clientSecret" label="Client secret" type="password" onChange={onChange} />
-                          {/* {this.renderErrors(errors.clientSecret)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input type="text" label="Location" name="regionCode" onChange={onChange} />
-                          {/* {this.renderErrors(errors.regionCode)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input name="subscriberId" label="Subscriber Id" type="text" onChange={onChange} />
-                          {/* {this.renderErrors(errors.subscriberId)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Form.Input name="tenantId" label="Tenant ID" type="text" onChange={onChange} />
-                          {/* {this.renderErrors(errors.tenantId)} */}
-                        </Form.Field>
-                        <Form.Field width="5">
-                          <Checkbox
-                            name="importExisting"
-                            label="Import existing instances"
-                            // type="checkbox"
-                            // onChange={onChange}
-                            onClick={e => {
-                              onChange({ target: { name: 'importExisting', value: !this.state.importExisting } })
-                            }}
-                          />
-                          {/* {this.renderErrors(errors.importExisting)} */}
-                        </Form.Field>
-                      </React.Fragment>
-                    )}
-                    {/* <Mutation
-                      mutation={BIND_CLOUD}
-                      onCompleted={data => toastie.success(data)}
-                      onError={error => {
-                        toastie.error(`There was an error: ${error}`)
-                      }}
-                    >
-                      {(bind, { called, loading }) => (
-                        <Form.Field>
-                          <Button
-                            color="green"
-                            disabled={!isFormValid || this.state.cloudProvider === 'none' || loading}
-                            onClick={e => {
-                              e.preventDefault()
-                              const config =
-                                this.state.cloudProvider === 'amazon'
-                                  ? {
-                                      accessKey: this.state.accessKey,
-                                      secretKey: this.state.secretKey,
-                                      endpoint: this.state.endpoint
-                                    }
-                                  : {
-                                      accessKey: this.state.accessKey,
-                                      clientId: this.state.clientId,
-                                      clientSecret: this.state.clientSecret,
-                                      tenantId: this.state.tenantId,
-                                      subscriberId: this.state.subscriberId,
-                                      regionCode: this.state.regionCode,
-                                      importExisting: this.state.importExisting
-                                    }
-                              bind({
-                                variables: {
-                                  zoneType: this.state.cloudProvider,
-                                  friendlyName: this.state.friendlyName,
-                                  config
-                                }
-                              })
-                            }}
-                          >
-                            Bind
-                          </Button>
-                        </Form.Field>
-                      )}
-                    </Mutation> */}
-                  </Form>
-                )
-              }}
-            </Validator>
-          </Modal.Content>
-        </Modal>
+        <Header as="h1">Examples for using RFVC</Header>
+        <Header as="h2">Basic Validation</Header>
+        <Validator fields={this.fields} parent={this} validateOnLoad>
+          {({ isFormValid, onChange }) => {
+            return (
+              <Form>
+                <Form.Field
+                  name="sources"
+                  label="Source / Source Group"
+                  options={options}
+                  defaultValue={[1]}
+                  fluid
+                  multiple
+                  selection
+                  search
+                  onChange={onChange}
+                  control={Dropdown}
+                />
+                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                <hr />
+                <Button disabled={!isFormValid}>Test</Button>
+              </Form>
+            )
+          }}
+        </Validator>
+        {/* <Header as={'h2'}>Basic Validation using fields to map (and no semantic-ui)</Header>
+        <Validator fields={this.fields} parent={this}>
+          {({ isFormValid, fields, onChange, errors }) => {
+            return (
+              <Form>
+                {fields &&
+                  fields.map((input, i) => {
+                    return (
+                      <div key={i}>
+                        <label>{input.value.label}</label>
+                        <input name={input.value.name} onChange={onChange} />
+                        {this.renderErrors(errors[input.value.name])}
+                      </div>
+                    )
+                  })}
+                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                <hr />
+                <button disabled={!isFormValid}>Test</button>
+              </Form>
+            )
+          }}
+        </Validator>
+        <Header as="h2">Validation using isFieldValid</Header>
+        <Validator fields={this.fields} parent={this}>
+          {({ isFormValid, isFieldValid, onChange, errors }) => {
+            return (
+              <Form>
+                <Form.Field>
+                  <label>Your Emails</label>
+                  <Input name="emailAddresses" onChange={onChange} />
+                  {this.renderErrors(errors.emailAddresses)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
+                  Thats an Email!
+                </Button>
+                <Form.Field>
+                  <label>Something</label>
+                  <Input name="something" onChange={onChange} />
+                  {this.renderErrors(errors.something)}
+                </Form.Field>
+                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
+                  Its not nothing
+                </Button>
+                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                <hr />
+                <button disabled={!isFormValid}>Test</button>
+              </Form>
+            )
+          }}
+        </Validator>
+        <Header as="h2">Validation using validateOnLoad and isFieldValid</Header>
+        <Validator fields={this.fields} parent={this} validateOnLoad>
+          {({ isFormValid, isFieldValid, onChange, errors }) => {
+            return (
+              <Form>
+                <Form.Field>
+                  <label>Your Emails</label>
+                  <Input name="emailAddresses" onChange={onChange} value={'I_DONT_WORK'} />
+                  {this.renderErrors(errors.emailAddresses)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
+                  Thats an Email!
+                </Button>
+                <Form.Field>
+                  <label>Something</label>
+                  <Input name="something" onChange={onChange} defaultValue={''} />
+                  {this.renderErrors(errors.something)}
+                </Form.Field>
+                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
+                  Its not nothing
+                </Button>
+                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                <hr />
+                <button disabled={!isFormValid}>Test</button>
+              </Form>
+            )
+          }}
+        </Validator>
+        <Header as="h2">Validation using a custom onValidate handler</Header>
+        <Validator
+          fields={this.fields}
+          onValidate={(fieldName, fieldValue) => this.setState({ hidden: fieldValue })}
+          validateOnLoad
+        >
+          {({ isFormValid, isFieldValid, onChange, errors }) => {
+            return (
+              <Form>
+                <Form.Field>
+                  <label>Your Emails</label>
+                  <Input name="emailAddresses" onChange={onChange} />
+                  {this.renderErrors(errors.emailAddresses)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
+                  Thats an Email!
+                </Button>
+                <Form.Field>
+                  <label>Something</label>
+                  <Input name="something" onChange={onChange} />
+                  {this.renderErrors(errors.something)}
+                </Form.Field>
+                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
+                  Its not nothing
+                </Button>
+                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                <hr />
+                <button disabled={!isFormValid}>Test</button>
+              </Form>
+            )
+          }}
+        </Validator> */}
       </Container>
     )
   }

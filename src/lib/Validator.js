@@ -102,7 +102,7 @@ export default class Validator extends React.Component {
     this.addToStateProperty('errors', { [fieldName]: errorArray })
   }
 
-  removeAllErrors = fieldName => {
+  removeAllErrorMessages = fieldName => {
     this.setState({ errors: Object.assign(this.state.errors, { [fieldName]: [] }) })
   }
 
@@ -175,7 +175,7 @@ export default class Validator extends React.Component {
         {
           validation: Object.assign(this.state.validation, { [fieldName]: true })
         },
-        () => this.removeAllErrors(fieldName)
+        () => this.removeAllErrorMessages(fieldName)
       )
       return true
     }
@@ -192,6 +192,7 @@ export default class Validator extends React.Component {
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
+    console.log('fieldName: ', fieldName, 'fieldValue: ', fieldValue)
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
@@ -210,9 +211,12 @@ export default class Validator extends React.Component {
 
     fieldNames.filter(field => field).forEach(fieldName => {
       let fieldValue =
-        document.getElementsByName(fieldName)[0] && document.getElementsByName(fieldName)[0].value
+        Object.values(this.props.fields).find(field => {
+          return field.name === fieldName
+        }).defaultValue ||
+        (document.getElementsByName(fieldName)[0] && document.getElementsByName(fieldName)[0].value
           ? document.getElementsByName(fieldName)[0].value
-          : ''
+          : '')
       this.validateFieldAndUpdateState(fieldName, fieldValue)
     })
   }
@@ -241,11 +245,11 @@ export default class Validator extends React.Component {
       }
     })
     this.validateFormAndUpdateState()
-    if (this.props.validateOnLoad) Object.values(this.props.fields).map(field => this.removeAllErrors(field.name))
+    if (this.props.validateOnLoad)
+      Object.values(this.props.fields).map(field => this.removeAllErrorMessages(field.name))
   }
 
   render() {
-    console.log('this.props here is :', this.props)
     const { errors, isFormValid, validation } = this.state
     return this.props.children({
       isFormValid,
