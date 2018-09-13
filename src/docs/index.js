@@ -30,18 +30,18 @@ class App extends React.Component {
   }
 
   fields = {
-    // emailAddresses: {
-    //   name: 'emailAddresses',
-    //   rules: ['isEmailArray'],
-    //   required: true,
-    //   label: 'Email addresses'
-    // },
-    // something: {
-    //   name: 'something',
-    //   rules: ['isPhoneNumber'],
-    //   required: 'test',
-    //   label: 'Something'
-    // },
+    emailAddresses: {
+      name: 'emailAddresses',
+      rules: ['isEmailArray'],
+      required: 'test',
+      label: 'Email addresses'
+    },
+    something: {
+      name: 'something',
+      rules: ['isPhoneNumber'],
+      required: 'test',
+      label: 'Something'
+    }
     // number: {
     //   name: 'number',
     //   rules: ['isNumeric'],
@@ -53,14 +53,14 @@ class App extends React.Component {
     //   rules: ['isFullName'],
     //   required: 'group2',
     //   label: 'name'
-    // },
-    sources: {
-      rules: [],
-      name: 'sources',
-      required: true,
-      label: 'sources',
-      defaultValue: [options[0].value]
-    }
+    // // },
+    // sources: {
+    //   rules: [],
+    //   name: 'sources',
+    //   required: true,
+    //   label: 'sources',
+    //   defaultValue: [options[0].value]
+    // }
   }
 
   renderErrors(errors) {
@@ -79,21 +79,25 @@ class App extends React.Component {
         <Header as="h1">Examples for using RFVC</Header>
         <Header as="h2">Basic Validation</Header>
         <Validator fields={this.fields} parent={this} validateOnLoad>
-          {({ isFormValid, onChange }) => {
+          {({ isFormValid, isFieldValid, onChange, errors }) => {
             return (
               <Form>
-                <Form.Field
-                  name="sources"
-                  label="Source / Source Group"
-                  options={options}
-                  defaultValue={[1]}
-                  fluid
-                  multiple
-                  selection
-                  search
-                  onChange={onChange}
-                  control={Dropdown}
-                />
+                <Form.Field>
+                  <label>Your Emails</label>
+                  <input name="emailAddresses" onChange={onChange} />
+                  {this.renderErrors(errors.emailAddresses)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
+                  Thats an Email!
+                </Button>
+                <Form.Field>
+                  <label>Something</label>
+                  <input name="something" onChange={onChange} />
+                  {this.renderErrors(errors.something)}
+                </Form.Field>
+                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
+                  Its not nothing
+                </Button>
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
                 <Button disabled={!isFormValid}>Test</Button>
