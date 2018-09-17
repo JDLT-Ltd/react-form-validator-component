@@ -87,28 +87,28 @@ class ExampleForm extends React.Component {
 
 #### Required props
 
-`Validator` has one **required** props  
+`Validator` has one **required** prop  
   * `fields` - an object with one property per input field  
-The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules. You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes. E.g. `semantic-ui-react`'s `DropDown` component. In that case, the Validator's default method of checking values on load will fail.
+The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules. You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes. E.g. `semantic-ui-react`'s `DropDown` component (i.e. the matching `name` attribute cannot be found on a DOM node containing the value to be validated). In those cases, the Validator's default method of checking values on load will fail. However, validation on *change* will be unaffected.
   
 #### Optional Props
 
 It also has three **optional** props
 
  * `parent` -  a reference to the component whose state `Validator` should add validated form data to.   
-  By default a property will be added to `parent`'s state with a key equal to the `name` attribute of its `input` and a value equal to the valid input.  
+  By default a property will be added to `parent`'s state with a key equal to the `name` attribute of its `input` and a value equal to the validated input.  
  *  `onValidate` - A handler defining what to do with validated input.   
  By default, `Validator` will set `parent.state[fieldName]` to be either  valid input or null if input is invalid.
 
  **You need to provide at least one of `parent` or `onValidate`**
  
   * `validateOnLoad` - a boolean  
-  By defautl `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (empty fields will not dsiplay errors - however they will prevent set isFormValid to false).  
+  By defautl `Validator` will attempt to validate every field that is prepopulated on `componentDidMount`. (Empty required fields will not dsiplay errors - however they will set isFormValid to false).  
   If you want to avoid validation running on load, simply set the value to false.
  
 ### Rules in RFVC
 
-RFVC let's you use a mixture of predefined rules and your personal custom rules, just as it let's you provide your own functionality for `onPassValidation`.
+You can use a mixture of predefined rules and your personal custom rules, just as it let's you provide your own functionality for `onPassValidation`.
 
 #### Default Rules
 
@@ -162,8 +162,7 @@ A boolean. `true` when all inputs are validated.
 
 #### `isFieldValid`
 
-An object with a property for each field which will be `true` if it's valid and `false` if it's not.
-
+An object with a property for each field. The key matches the `name` property of the field and the value will be `true` if that field is valid and `false` if it's not.
 
 #### `fields`
 
@@ -196,7 +195,7 @@ fields: {
 
 #### `onChange`
 
-`onChange` will validate the input provided and then update the parent components state, adding any valid input and removing possible invalid input.
+`onChange` will validate the input provided and then update the parent component's state, adding any valid input and removing possible invalid input.
 
 #### `errors`
 
