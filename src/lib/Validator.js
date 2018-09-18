@@ -223,10 +223,8 @@ export default class Validator extends React.Component {
         throw new Error('Please provide a rules array for each field (or an empty array for non-validated fields)')
     })
   }
-
-  componentDidMount() {
-    this.validateFieldsInput()
-    // Add isRequired rule is field is required and not in a group
+  // Add isRequired rule is field is required and not in a group
+  addRequiredRuleToFields() {
     Object.values(this.props.fields).forEach(field => {
       if (field.required === true) {
         const newFields = this.props.fields
@@ -234,6 +232,11 @@ export default class Validator extends React.Component {
         this.setState({ fields: newFields })
       }
     })
+  }
+
+  componentDidMount() {
+    this.validateFieldsInput()
+    this.addRequiredRuleToFields()
     this.validateFormAndUpdateState()
     if (this.props.validateOnLoad)
       Object.values(this.props.fields).map(field => this.removeAllErrorMessages(field.name))
