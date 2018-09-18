@@ -38,7 +38,7 @@ class App extends React.Component {
     },
     something: {
       name: 'something',
-      rules: ['isPhoneNumber'],
+      rules: [],
       required: 'test',
       label: 'Something'
     }

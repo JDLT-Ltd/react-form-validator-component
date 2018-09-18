@@ -6,77 +6,68 @@ export default class Validator extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: Object.keys(props.fields).reduce((accumulator, currentValue) => {
-        accumulator[currentValue] = []
-        return accumulator
-      }, {}),
-      groupValidation: Object.keys(props.fields).reduce((groupValidation, currentField) => {
-        const fieldValue = props.fields[currentField]
-        if (fieldValue.required && typeof fieldValue.required === 'string') {
-          groupValidation[fieldValue.required] = Object.assign({}, groupValidation[fieldValue.required], {
-            [currentField]: (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
-          })
-
-          return groupValidation
-        }
-        return groupValidation
-      }, {}),
-      validation: Object.keys(props.fields).reduce((accumulator, currentValue) => {
-        const fieldValue = props.fields[currentValue]
-        //if field is a member of a group, add that group to validation and add the field to validation.groupValidation
-        if (fieldValue.required && typeof fieldValue.required === 'string') {
-          accumulator[fieldValue.required] = false
-          return accumulator
-        } else {
-          accumulator[currentValue] =
-            (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
-          return accumulator
-        }
-      }, {}),
+      errors: this.initialiseErrors(props.fields),
+      groupValidation: this.initialiseGroupValidation(props.fields),
+      validation: this.initialiseFieldValidation(props.fields),
       isFormValid: false
     }
   }
 
+  // each field gets an (empty) array for its errors
+  initialiseErrors(fields) {
+    return Object.keys(fields).reduce((accumulator, currentValue) => {
+      accumulator[currentValue] = []
+      return accumulator
+    }, {})
+  }
+
+  initialiseGroupValidation(fields) {
+    return Object.keys(fields).reduce((groupValidation, currentField) => {
+      const field = fields[currentField]
+      if (field.required && typeof field.required === 'string') {
+        groupValidation[field.required] = Object.assign({}, groupValidation[field.required], {
+          [currentField]: (field.rules && field.rules.length > 0) || field.required ? false : true
+        })
+
+        return groupValidation
+      }
+      return groupValidation
+    }, {})
+  }
+
+  initialiseFieldValidation(fields) {
+    return Object.keys(fields).reduce((accumulator, currentValue) => {
+      const fieldValue = fields[currentValue]
+      //if field is a member of a group, add that group to validation and add the field to validation.groupValidation
+      if (fieldValue.required && typeof fieldValue.required === 'string') {
+        accumulator[fieldValue.required] = false
+        return accumulator
+      } else {
+        accumulator[currentValue] =
+          (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
+        return accumulator
+      }
+    }, {})
+  }
+
   componentDidUpdate(prevProps) {
-    if (this.props.fields !== prevProps.fields)
+    const currentProps = this.props
+    if (currentProps.fields !== prevProps.fields)
       this.setState(
         {
-          fields: this.props.fields,
-          errors: Object.keys(this.props.fields).reduce((accumulator, currentValue) => {
-            accumulator[currentValue] = []
-            return accumulator
-          }, {}),
-          groupValidation: Object.keys(this.props.fields).reduce((groupValidation, currentField) => {
-            const fieldValue = this.props.fields[currentField]
-            if (fieldValue.required && typeof fieldValue.required === 'string') {
-              groupValidation[fieldValue.required] = Object.assign({}, groupValidation[fieldValue.required], {
-                [currentField]: (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
-              })
-
-              return groupValidation
-            }
-            return groupValidation
-          }, {}),
-          validation: Object.keys(this.props.fields).reduce((accumulator, currentValue) => {
-            const fieldValue = this.props.fields[currentValue]
-            //if field is a member of a group, add that group to validation and add the field to validation.groupValidation
-            if (fieldValue.required && typeof fieldValue.required === 'string') {
-              accumulator[fieldValue.required] = false
-              return accumulator
-            } else {
-              accumulator[currentValue] =
-                (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
-              return accumulator
-            }
-          }, {}),
+          fields: currentProps.fields,
+          errors: this.initialiseErrors(currentProps.fields),
+          groupValidation: this.initialiseGroupValidation(currentProps.fields),
+          validation: this.initialiseFieldValidation(currentProps.fields),
           isFormValid: false
         },
         () => console.log('fields has changed')
       )
   }
 
-  onValidate = (name, value) => {
-    this.props.parent.setState({ [name]: value })
+  // default behaviour for handling successfully validated input
+  onValidate = (fieldName, fieldValue) => {
+    this.props.parent.setState({ [fieldName]: fieldValue })
   }
 
   toArray = object => {
@@ -192,7 +183,6 @@ export default class Validator extends React.Component {
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
-    console.log('fieldName: ', fieldName, 'fieldValue: ', fieldValue)
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
