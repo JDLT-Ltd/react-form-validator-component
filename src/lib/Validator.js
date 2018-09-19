@@ -2,26 +2,38 @@ import React from 'react'
 import PropTypes from 'prop-types'
 
 import * as defaultRules from './rules'
+
+import addToStateProperty from './utils/addToStateProperty'
+import toArray from './utils/toArray'
 export default class Validator extends React.Component {
   constructor(props) {
     super(props)
     this.state = {
-      errors: this.initialiseErrors(props.fields),
-      groupValidation: this.initialiseGroupValidation(props.fields),
-      validation: this.initialiseFieldValidation(props.fields),
+      errors: this.initialiseStateErrors(props.fields),
+      groupValidation: this.initialiseStateGroupValidation(props.fields),
+      validation: this.initialiseStateFieldValidation(props.fields),
       isFormValid: false
     }
   }
 
+  componentDidMount() {
+    this.validateFieldsProp()
+    this.addRequiredRuleToFields()
+    this.validateFormAndUpdateState()
+    // TODO: only remove errors from empty fields
+    if (this.props.validateOnLoad)
+      Object.values(this.props.fields).forEach(field => this.removeAllErrorMessages(field.name))
+  }
+
   // each field gets an (empty) array for its errors
-  initialiseErrors(fields) {
+  initialiseStateErrors(fields) {
     return Object.keys(fields).reduce((accumulator, currentValue) => {
       accumulator[currentValue] = []
       return accumulator
     }, {})
   }
 
-  initialiseGroupValidation(fields) {
+  initialiseStateGroupValidation(fields) {
     return Object.keys(fields).reduce((groupValidation, currentField) => {
       const field = fields[currentField]
       if (field.required && typeof field.required === 'string') {
@@ -35,7 +47,7 @@ export default class Validator extends React.Component {
     }, {})
   }
 
-  initialiseFieldValidation(fields) {
+  initialiseStateFieldValidation(fields) {
     return Object.keys(fields).reduce((accumulator, currentValue) => {
       const fieldValue = fields[currentValue]
       //if field is a member of a group, add that group to validation and add the field to validation.groupValidation
@@ -53,16 +65,13 @@ export default class Validator extends React.Component {
   componentDidUpdate(prevProps) {
     const currentProps = this.props
     if (currentProps.fields !== prevProps.fields)
-      this.setState(
-        {
-          fields: currentProps.fields,
-          errors: this.initialiseErrors(currentProps.fields),
-          groupValidation: this.initialiseGroupValidation(currentProps.fields),
-          validation: this.initialiseFieldValidation(currentProps.fields),
-          isFormValid: false
-        },
-        () => console.log('fields has changed')
-      )
+      this.setState({
+        fields: currentProps.fields,
+        errors: this.initialiseStateErrors(currentProps.fields),
+        groupValidation: this.initialiseStateGroupValidation(currentProps.fields),
+        validation: this.initialiseStateFieldValidation(currentProps.fields),
+        isFormValid: false
+      })
   }
 
   // default behaviour for handling successfully validated input
@@ -70,27 +79,11 @@ export default class Validator extends React.Component {
     this.props.parent.setState({ [fieldName]: fieldValue })
   }
 
-  toArray = object => {
-    return Object.entries(object).reduce((accumulator, [key, value]) => {
-      return accumulator.concat({
-        key,
-        value
-      })
-    }, [])
-  }
-
-  // merge value with current property on state
-  addToStateProperty = (target, value) => {
-    this.setState({
-      [target]: Object.assign(this.state[target], value)
-    })
-  }
-
   removeError = (fieldName, errorMessage) => {
     const errorArray = this.state.errors[fieldName]
     const messagePosition = errorArray.indexOf(errorMessage)
     if (messagePosition > -1) errorArray.splice(messagePosition, 1)
-    this.addToStateProperty('errors', { [fieldName]: errorArray })
+    addToStateProperty('errors', { [fieldName]: errorArray }, this)
   }
 
   removeAllErrorMessages = fieldName => {
@@ -99,14 +92,18 @@ export default class Validator extends React.Component {
 
   updateErrorsForField = (validation, fieldName, errorMessage) => {
     if (!validation) {
-      this.addToStateProperty('errors', {
-        [fieldName]: [...new Set([...(this.state.errors[fieldName] || []), errorMessage])]
-      })
+      addToStateProperty(
+        'errors',
+        {
+          [fieldName]: [...new Set([...(this.state.errors[fieldName] || []), errorMessage])]
+        },
+        this
+      )
     } else this.removeError(fieldName, errorMessage)
   }
 
-  validateRules = (fieldName, fieldValue, fieldRules) => {
-    return fieldRules.reduce((accumulator, fieldRule) => {
+  validateRules = (fieldName, fieldValue, fieldRules) =>
+    fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
       const validation = rule.validator(fieldValue)
 
@@ -114,7 +111,6 @@ export default class Validator extends React.Component {
 
       return accumulator && validation
     }, true)
-  }
 
   validateGroup = (fieldName, fieldValue, groupName) => {
     // check if any other member of the group is valid
@@ -155,26 +151,22 @@ export default class Validator extends React.Component {
   }
 
   validateField = (fieldName, fieldValue) => {
-    // Check if field is in a group
+    const field = this.props.fields[fieldName]
+    // Check whether field is in a group
     const groupName =
       this.props.fields[fieldName].required && typeof this.props.fields[fieldName].required === 'string'
         ? this.props.fields[fieldName].required
         : undefined
     // ensure that empty non-required fields pass validation and don't throw errors
-    if (!groupName && !this.props.fields[fieldName].required && fieldValue.length === 0) {
-      this.setState(
-        {
-          validation: Object.assign(this.state.validation, { [fieldName]: true })
-        },
-        () => this.removeAllErrorMessages(fieldName)
-      )
+    if (!groupName && !field.required && fieldValue.length === 0) {
+      addToStateProperty('validation', { [fieldName]: true }, this)
       return true
     }
     if (groupName) {
       return this.validateGroup(fieldName, fieldValue, groupName)
     }
     // standard validation
-    const fieldRules = this.props.fields[fieldName].rules
+    const fieldRules = field.rules
     const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
     this.setState({
       validation: Object.assign(this.state.validation, { [fieldName]: isFieldValid })
@@ -197,17 +189,14 @@ export default class Validator extends React.Component {
   }
 
   validateFormAndUpdateState = () => {
-    const fieldNames = Object.values(this.props.fields).map(field => field.name)
+    const fields = Object.values(this.props.fields).filter(field => field)
 
-    fieldNames.filter(field => field).forEach(fieldName => {
-      let fieldValue =
-        Object.values(this.props.fields).find(field => {
-          return field.name === fieldName
-        }).defaultValue ||
-        (document.getElementsByName(fieldName)[0] && document.getElementsByName(fieldName)[0].value
-          ? document.getElementsByName(fieldName)[0].value
-          : '')
-      this.validateFieldAndUpdateState(fieldName, fieldValue)
+    fields.forEach(field => {
+      const valueFromDom = document.getElementsByName(field.name)[0].value
+      const fieldValue =
+        field.defaultValue || (document.getElementsByName(field.name)[0] && valueFromDom ? valueFromDom : '')
+
+      this.validateFieldAndUpdateState(field.name, fieldValue)
     })
   }
 
@@ -216,14 +205,16 @@ export default class Validator extends React.Component {
     this.validateFieldAndUpdateState(changeEvent.name, changeEvent.value)
   }
 
-  validateFieldsInput = () => {
+  validateFieldsProp = () => {
     Object.values(this.props.fields).forEach(field => {
-      if (!field.name) throw new Error('Please provide a name value for all of your fields')
+      if (!field.name) throw new Error(`Please provide a name value for all of your fields`)
       if (!field.rules)
-        throw new Error('Please provide a rules array for each field (or an empty array for non-validated fields)')
+        throw new Error(
+          `Please provide a rules array for field ${field.name} (or an empty array for non-validated fields)`
+        )
     })
   }
-  // Add isRequired rule is field is required and not in a group
+  // Add isRequired rule if field is required and not in a group
   addRequiredRuleToFields() {
     Object.values(this.props.fields).forEach(field => {
       if (field.required === true) {
@@ -234,20 +225,12 @@ export default class Validator extends React.Component {
     })
   }
 
-  componentDidMount() {
-    this.validateFieldsInput()
-    this.addRequiredRuleToFields()
-    this.validateFormAndUpdateState()
-    if (this.props.validateOnLoad)
-      Object.values(this.props.fields).map(field => this.removeAllErrorMessages(field.name))
-  }
-
   render() {
     const { errors, isFormValid, validation } = this.state
     return this.props.children({
       isFormValid,
       isFieldValid: validation,
-      fields: this.toArray(this.props.fields || {}),
+      fields: toArray(this.props.fields || {}),
       onChange: this.onChange,
       errors
     })
