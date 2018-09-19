@@ -5,32 +5,33 @@ import * as defaultRules from './rules'
 export default class Validator extends React.Component {
   constructor(props) {
     super(props)
+    const fieldNamesArray = Object.keys(props.fields)
     this.state = {
-      errors: Object.keys(props.fields).reduce((accumulator, currentValue) => {
-        accumulator[currentValue] = []
-        return accumulator
+      errors: fieldNamesArray.reduce((errorsObject, currentValue) => {
+        errorsObject[currentValue] = []
+        return errorsObject
       }, {}),
-      groupValidation: Object.keys(props.fields).reduce((groupValidation, currentField) => {
+      groupValidation: fieldNamesArray.reduce((groupValidationObject, currentField) => {
         const fieldValue = props.fields[currentField]
         if (fieldValue.required && typeof fieldValue.required === 'string') {
-          groupValidation[fieldValue.required] = Object.assign({}, groupValidation[fieldValue.required], {
+          groupValidationObject[fieldValue.required] = Object.assign({}, groupValidationObject[fieldValue.required], {
             [currentField]: (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
           })
 
-          return groupValidation
+          return groupValidationObject
         }
-        return groupValidation
+        return groupValidationObject
       }, {}),
-      validation: Object.keys(props.fields).reduce((accumulator, currentValue) => {
+      validation: fieldNamesArray.reduce((accumulatorObject, currentValue) => {
         const fieldValue = props.fields[currentValue]
         //if field is a member of a group, add that group to validation and add the field to validation.groupValidation
         if (fieldValue.required && typeof fieldValue.required === 'string') {
-          accumulator[fieldValue.required] = false
-          return accumulator
+          accumulatorObject[fieldValue.required] = false
+          return accumulatorObject
         } else {
-          accumulator[currentValue] =
+          accumulatorObject[currentValue] =
             (fieldValue.rules && fieldValue.rules.length > 0) || fieldValue.required ? false : true
-          return accumulator
+          return accumulatorObject
         }
       }, {}),
       isFormValid: false
