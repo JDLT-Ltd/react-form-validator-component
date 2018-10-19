@@ -21,7 +21,7 @@ export default class Validator extends React.Component {
     this.addRequiredRuleToFields()
     this.validateFormAndUpdateState()
     // TODO: only remove errors from empty fields
-    if (this.props.validateOnLoad)
+    if (!this.props.validateOnLoad)
       Object.values(this.props.fields).forEach(field => this.removeAllErrorMessages(field.name))
   }
 
