@@ -29,40 +29,40 @@ class App extends React.Component {
     this.state = {}
   }
 
-  fields = {
-    emailAddresses: {
+  fields = [
+    {
       name: 'emailAddresses',
       rules: ['isEmailArray'],
       required: 'test',
       label: 'Email addresses'
     },
-    phoneNumber: {
+    {
       name: 'phoneNumber',
       rules: ['isPhoneNumber'],
       required: 'test',
       label: 'phoneNumber'
     },
-    url: {
+    {
       name: 'url',
       rules: ['isUrl'],
       required: true,
       label: 'url'
     },
-    name: {
+    {
       name: 'name',
       rules: ['isFullName'],
       required: true,
       label: 'name'
     }
     //,
-    // sources: {
+    // {
     //   rules: [],
     //   name: 'sources',
     //   required: true,
     //   label: 'sources',
     //   defaultValue: [options[0].value]
     // }
-  }
+  ]
 
   renderErrors(errors) {
     return errors.map((error, i) => {
