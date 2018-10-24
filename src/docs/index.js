@@ -1,6 +1,6 @@
 import React from 'react'
 import reactDOM from 'react-dom'
-import { Form, Header, Label, Container, Button, Dropdown } from 'semantic-ui-react'
+import { Form, Header, Label, Container, Button } from 'semantic-ui-react'
 
 import { Validator } from '../lib/index'
 
@@ -12,16 +12,16 @@ import { Validator } from '../lib/index'
 //   },
 //   error: 'Please provide a value'
 // }
-const options = [
-  {
-    text: 'option 1',
-    value: 1
-  },
-  {
-    text: 'option 2',
-    value: 2
-  }
-]
+// const options = [
+//   {
+//     text: 'option 1',
+//     value: 1
+//   },
+//   {
+//     text: 'option 2',
+//     value: 2
+//   }
+// ]
 class App extends React.Component {
   constructor(props) {
     super(props)
@@ -36,24 +36,25 @@ class App extends React.Component {
       required: 'test',
       label: 'Email addresses'
     },
-    something: {
-      name: 'something',
+    phoneNumber: {
+      name: 'phoneNumber',
       rules: ['isPhoneNumber'],
       required: 'test',
-      label: 'Something'
+      label: 'phoneNumber'
+    },
+    number: {
+      name: 'number',
+      rules: ['isNumeric'],
+      required: true,
+      label: 'number'
+    },
+    name: {
+      name: 'name',
+      rules: ['isFullName'],
+      required: true,
+      label: 'name'
     }
-    // number: {
-    //   name: 'number',
-    //   rules: ['isNumeric'],
-    //   required: 'group2',
-    //   label: 'number'
-    // },
-    // name: {
-    //   name: 'name',
-    //   rules: ['isFullName'],
-    //   required: 'group2',
-    //   label: 'name'
-    // // },
+    //,
     // sources: {
     //   rules: [],
     //   name: 'sources',
@@ -80,6 +81,7 @@ class App extends React.Component {
         <Header as="h2">Basic Validation</Header>
         <Validator fields={this.fields} parent={this} validateOnLoad>
           {({ isFormValid, isFieldValid, onChange, errors }) => {
+            console.log('isFieldValid: ', isFieldValid)
             return (
               <Form>
                 <Form.Field>
@@ -91,12 +93,28 @@ class App extends React.Component {
                   Thats an Email!
                 </Button>
                 <Form.Field>
-                  <label>Something</label>
-                  <input name="something" onChange={onChange} />
-                  {this.renderErrors(errors.something)}
+                  <label>Your Phone number</label>
+                  <input name="phoneNumber" onChange={onChange} />
+                  {this.renderErrors(errors.phoneNumber)}
                 </Form.Field>
-                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
-                  Its not nothing
+                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.phoneNumber}>
+                  Its a phone number
+                </Button>
+                <Form.Field>
+                  <label>A Number</label>
+                  <input name="number" onChange={onChange} />
+                  {this.renderErrors(errors.number)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.number}>
+                  Some Number
+                </Button>
+                <Form.Field>
+                  <label>Your Name</label>
+                  <input name="name" onChange={onChange} />
+                  {this.renderErrors(errors.name)}
+                </Form.Field>
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.name}>
+                  This is your Name
                 </Button>
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
