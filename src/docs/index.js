@@ -79,14 +79,14 @@ class App extends React.Component {
       <Container>
         <Header as="h1">Examples for using RFVC</Header>
         <Header as="h2">Basic Validation</Header>
-        <Validator fields={this.fields} parent={this} validateOnLoad>
+        <Validator fields={this.fields} parent={this}>
           {({ isFormValid, isFieldValid, onChange, errors }) => {
             console.log('isFieldValid: ', isFieldValid)
             return (
               <Form>
                 <Form.Field>
                   <label>Your Emails</label>
-                  <input name="emailAddresses" onChange={onChange} />
+                  <input name="emailAddresses" onChange={onChange} content="notAnEmail" />
                   {this.renderErrors(errors.emailAddresses)}
                 </Form.Field>
                 <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
