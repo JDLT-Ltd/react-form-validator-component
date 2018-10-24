@@ -42,11 +42,11 @@ class App extends React.Component {
       required: 'test',
       label: 'phoneNumber'
     },
-    number: {
-      name: 'number',
-      rules: ['isNumeric'],
+    url: {
+      name: 'url',
+      rules: ['isUrl'],
       required: true,
-      label: 'number'
+      label: 'url'
     },
     name: {
       name: 'name',
@@ -101,12 +101,12 @@ class App extends React.Component {
                   Its a phone number
                 </Button>
                 <Form.Field>
-                  <label>A Number</label>
-                  <input name="number" onChange={onChange} />
-                  {this.renderErrors(errors.number)}
+                  <label>Your Website (this uses the isUrl rule)</label>
+                  <input name="url" onChange={onChange} />
+                  {this.renderErrors(errors.url)}
                 </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.number}>
-                  Some Number
+                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.url}>
+                  Some Url
                 </Button>
                 <Form.Field>
                   <label>Your Name</label>
