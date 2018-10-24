@@ -79,7 +79,7 @@ class App extends React.Component {
       <Container>
         <Header as="h1">Examples for using RFVC</Header>
         <Header as="h2">Basic Validation</Header>
-        <Validator fields={this.fields} parent={this}>
+        <Validator fields={this.fields} parent={this} returnInput>
           {({ isFormValid, isFieldValid, onChange, errors }) => {
             console.log('isFieldValid: ', isFieldValid)
             return (

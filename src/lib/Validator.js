@@ -12,7 +12,8 @@ export default class Validator extends React.Component {
       errors: this.initialiseStateErrors(props.fields),
       groupValidation: this.initialiseStateGroupValidation(props.fields),
       validation: this.initialiseStateFieldValidation(props.fields),
-      isFormValid: false
+      isFormValid: false,
+      validatorInput: {} // only used if user sets returnInput
     }
   }
 
@@ -190,6 +191,12 @@ export default class Validator extends React.Component {
     this.setState({
       isFormValid: Object.values(this.state.validation).every(value => value)
     })
+
+    // if the user provides the returnInput prop, we set the input to parent state regardless of whether it is valid in the validatorInput object
+    if (this.props.returnInput) {
+      addToStateProperty('validatorInput', { [fieldName]: fieldValue }, this)
+      this.props.parent.setState({ validatorInput: this.state.validatorInput })
+    }
   }
 
   validateFormAndUpdateState = () => {
@@ -230,10 +237,10 @@ export default class Validator extends React.Component {
   }
 
   render() {
-    const { errors, isFormValid, validation } = this.state
+    const { errors, isFormValid, validation, groupValidation } = this.state
     return this.props.children({
       isFormValid,
-      isFieldValid: validation,
+      isFieldValid: Object.assign({}, validation, ...Object.values(groupValidation)), //we  spread in all values of group Validation to show grouped fields individually
       fields: toArray(this.props.fields || {}),
       onChange: this.onChange,
       errors
@@ -246,9 +253,11 @@ Validator.propTypes = {
   children: PropTypes.func,
   onValidate: PropTypes.func,
   fields: PropTypes.object,
-  validateOnLoad: PropTypes.bool
+  validateOnLoad: PropTypes.bool,
+  returnInput: PropTypes.bool
 }
 
 Validator.defaultProps = {
-  validateOnLoad: true
+  validateOnLoad: true,
+  returnInput: false
 }
