@@ -123,10 +123,14 @@ export default class Validator extends React.Component {
       const fieldRules = this.props.fields[fieldName].rules
       const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
-      this.setState({
-        groupValidation: Object.assign({}, this.state.groupValidation[groupName], { [fieldName]: isFieldValid })
+      const newGroupValidation = this.state.groupValidation
+
+      newGroupValidation[groupName] = Object.assign({}, this.state.groupValidation[groupName], {
+        [fieldName]: isFieldValid
       })
-      return true
+      return this.setState({
+        groupValidation: newGroupValidation
+      })
     }
     // check if this field is valid
     const fieldRules = this.props.fields[fieldName].rules
