@@ -32,9 +32,9 @@ class App extends React.Component {
   fields = {
     emailAddresses: {
       name: 'emailAddresses',
-      rules: ['isEmailArray'],
+      rules: ['isEmail'],
       required: 'test',
-      defaultValue: 'notanemail',
+      defaultValue: 'notanemail, testing array',
       label: 'Email addresses'
     },
     phoneNumber: {
@@ -89,7 +89,7 @@ class App extends React.Component {
                   control={'input'}
                   label="Your emails"
                   onChange={onChange}
-                  defaultValue="notanemail"
+                  defaultValue={'notanemail, testing array'}
                   name="emailAddresses"
                 />
                 {this.renderErrors(errors.emailAddresses)}

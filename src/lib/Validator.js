@@ -115,25 +115,42 @@ export default class Validator extends React.Component {
 
   validateGroup = (fieldName, fieldValue, groupName) => {
     // check if any other member of the group is valid
-    if (
+    const otherMemberValid =
       this.state.groupValidation[groupName] &&
       Object.entries(this.state.groupValidation[groupName])
         .filter(field => !field.includes(fieldName))
         .some(member => member.includes(true))
-    ) {
+    // if another member is valid and this  field is empty, all is well
+    if (otherMemberValid) {
       const fieldRules = this.props.fields[fieldName].rules
       const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
       const newGroupValidation = this.state.groupValidation
 
-      newGroupValidation[groupName] = Object.assign({}, this.state.groupValidation[groupName], {
-        [fieldName]: isFieldValid
-      })
-      return this.setState({
-        groupValidation: newGroupValidation
-      })
+      newGroupValidation[groupName] = !fieldValue
+        ? Object.assign({}, this.state.groupValidation[groupName], {
+            [fieldName]: isFieldValid,
+            invalidValuePresent: false
+          })
+        : Object.assign({}, this.state.groupValidation[groupName], {
+            [fieldName]: isFieldValid,
+            invalidValuePresent: true
+          })
+      return this.setState(
+        {
+          groupValidation: newGroupValidation
+        },
+        () =>
+          this.setState({
+            validation: Object.assign(this.state.validation, {
+              [groupName]:
+                Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
+                !this.state.groupValidation[groupName].invalidValuePresent
+            })
+          })
+      )
     }
-    // check if this field is valid
+    // if no other member is valid, or this field has a value, check if this field is valid
     const fieldRules = this.props.fields[fieldName].rules
     const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
@@ -148,7 +165,9 @@ export default class Validator extends React.Component {
       () =>
         this.setState({
           validation: Object.assign(this.state.validation, {
-            [groupName]: Object.values(this.state.groupValidation[groupName]).some(member => member === true)
+            [groupName]:
+              Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
+              !this.state.groupValidation[groupName].invalidValuePresent
           })
         })
     )
@@ -185,6 +204,7 @@ export default class Validator extends React.Component {
     if (this.validateField(fieldName, fieldValue)) {
       onValidate(fieldName, fieldValue)
     } else {
+      if (this.state.validation[fieldName] === null) return null
       onValidate(fieldName, null)
     }
 
@@ -225,10 +245,10 @@ export default class Validator extends React.Component {
         )
     })
   }
-  // Add isRequired rule if field is required and not in a group
+  // Add isRequired rule if field is required or in a group
   addRequiredRuleToFields() {
     Object.values(this.props.fields).forEach(field => {
-      if (field.required === true) {
+      if (field.required === true || typeof field.required === 'string') {
         const newFields = this.props.fields
         newFields[field.name].rules.push('isRequired')
         this.setState({ fields: newFields })
