@@ -102,6 +102,7 @@ class ExampleForm extends React.Component {
     Optional Keys
     * `required` - This key determines whether a field is required. If is is set to `true`, the field will only pass validation with a value. It can alternatively be set to a string which names the validation group it is a part of. [**See Group Validation**](#group-validation)
     * `defaultValue` - You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes.
+    * `onChange` - You can pass a custom onChange for each field, in case you have certain fields which need to be handled differently from the default.
     E.g. `semantic-ui-react`'s `DropDown` component (i.e. the matching `name` attribute cannot be found on a DOM node containing the value to be validated). In those cases, the Validator's default method of checking values on load will fail. However, validation on *change* will be unaffected. 
     * `label` - You can provide a label key, which will be returned from Validator in case you want to map over fields in order to build a form. 
 
