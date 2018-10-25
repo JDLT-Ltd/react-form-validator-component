@@ -58,7 +58,10 @@ class ExampleForm extends React.Component {
     this.state = {
       fields: {
         emailAddress: {
-          rules: ['isEmail', 'isRequired']
+        name: 'emailAddresses',
+        rules: ['isEmailArray'],
+        required: true,
+        label: 'Email addresses'
         }
       }
     }
@@ -71,8 +74,8 @@ class ExampleForm extends React.Component {
           return (
             <form>
               <label>Your Emails</label>
-              <input name="emailAddress" onChange={onChange} />
-              {errors.emailAddress.map((error, i) => {
+              <input name="emailAddresses" onChange={onChange} />
+              {errors.emailAddresses.map((error, i) => {
                 return <span key={i}>{error}</span>
               })}
               {isFormValid && <button type="submit">Submit</button>}
@@ -91,7 +94,19 @@ class ExampleForm extends React.Component {
 
 `Validator` has two **required** props 
   * `fields` - an object with one property per input field  
-The key to each property must match the `name` attribute of the input field it refers to, and its value is an object with one property: a `rules` array of any combination of strings referring to our predefined validation rules and user-defined custom rules. You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes. E.g. `semantic-ui-react`'s `DropDown` component (i.e. the matching `name` attribute cannot be found on a DOM node containing the value to be validated). In those cases, the Validator's default method of checking values on load will fail. However, validation on *change* will be unaffected.
+The structure of a field object is as follows 
+
+    Required Keys
+    * `rules` - Each object must have a `rules` array, containing any combination of strings referring to our predefined validation rules and user-defined custom rules. 
+    * `name` - The second required key is `name` which names the field you are validating. This must correspond to the name of the input field you want to validate.
+
+    Optional Keys
+    * `required` - This key determines whether a field is required. If is is set to `true`, the field will only pass validation with a value. It can alternatively be set to a string which names the validation group it is a part of. [**See Group Validation**](#group-validation)
+    * `defaultValue` - You can optionally provide a `defaultValue` property for each field. This is only required if you want to validate your form on load but are using form field components which don't correlate one-to-one with actual DOM nodes.
+    * `onChange` - You can pass a custom onChange for each field, in case you have certain fields which need to be handled differently from the default.
+    E.g. `semantic-ui-react`'s `DropDown` component (i.e. the matching `name` attribute cannot be found on a DOM node containing the value to be validated). In those cases, the Validator's default method of checking values on load will fail. However, validation on *change* will be unaffected. 
+    * `label` - You can provide a label key, which will be returned from Validator in case you want to map over fields in order to build a form. 
+
 
   * `parent` - a reference to the component whose state `Validator` should add validated form data to.   
 RFVC requires the parent components this context for several operations.
@@ -99,7 +114,7 @@ By default a property will be added to `parent`'s state with a key equal to the 
   
 #### Optional Props
 
-It also has three **optional** props
+Validator also has three **optional** props
   
  *  `onValidate` - A handler defining what to do with validated input.   
  By default, `Validator` will set `parent.state[fieldName]` to be either  valid input or null if input is invalid.
@@ -124,8 +139,11 @@ You can use a mixture of predefined rules and your personal custom rules, just a
 ```javascript
 fields: {
   emailAddress: {
-    rules: ['isEmail', 'isRequired']
-  }
+        name: 'emailAddresses',
+        rules: ['isEmailArray'],
+        required: true,
+        label: 'Email addresses'
+      }
 }
 ```
 
@@ -134,8 +152,11 @@ We are currently still working on creating a comprehensive list of default rules
 #### Custom Rules
 
 ```javascript
-fields: {
-  emailAddress: {
+const fields = {
+  emailAddress: { 
+    name: 'emailAddresses',
+    required: true,
+    label: 'Email addresses',
     rules: [
       'isEmail',
       {
@@ -144,8 +165,7 @@ fields: {
           return false
         },
         error: 'Please provide a value'
-      }
-    ]
+      }]
   }
 }
 ```
@@ -180,7 +200,7 @@ An array of objects which can optionally be used in the render prop function to 
 ##### i.e.
 
 ```javascript
-fields: {
+const = fields: {
         emailAddress: {
           rules: ['isEmail', 'isRequired'],
           label: 'email address'
@@ -221,7 +241,7 @@ In order to use group validation, simply replace the value of the required key o
 i.e.
 
 ```javascript
-fields = {
+const fields = {
     emailAddresses: {
       name: 'emailAddresses',
       rules: ['isEmailArray'],
