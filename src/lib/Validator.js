@@ -33,8 +33,7 @@ export default class Validator extends React.Component {
   }
 
   initialiseStateGroupValidation(fields) {
-    console.log('initalising state for groups on', fields)
-    const groupValidation = fields.reduce((groupValidation, currentField) => {
+    return fields.reduce((groupValidation, currentField) => {
       if (currentField.required && typeof currentField.required === 'string') {
         groupValidation[currentField.required] = Object.assign({}, groupValidation[currentField.required], {
           [currentField.name]:
@@ -45,8 +44,6 @@ export default class Validator extends React.Component {
       }
       return groupValidation
     }, {})
-    console.log('returning groupValidation as', groupValidation)
-    return groupValidation
   }
 
   initialiseStateFieldValidation(fields) {
