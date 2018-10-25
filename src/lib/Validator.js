@@ -120,22 +120,24 @@ export default class Validator extends React.Component {
       Object.entries(this.state.groupValidation[groupName])
         .filter(field => !field.includes(fieldName))
         .some(member => member.includes(true))
-    // if another member is valid and this  field is empty, all is well
+    // if another member is valid do this
     if (otherMemberValid) {
       const fieldRules = this.props.fields[fieldName].rules
       const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
       const newGroupValidation = this.state.groupValidation
 
-      newGroupValidation[groupName] = !fieldValue
-        ? Object.assign({}, this.state.groupValidation[groupName], {
-            [fieldName]: isFieldValid,
-            invalidValuePresent: false
-          })
-        : Object.assign({}, this.state.groupValidation[groupName], {
-            [fieldName]: isFieldValid,
-            invalidValuePresent: true
-          })
+      // and if another member is valid and this field is empty or valid, all is well, otherwise set invalidValuePresent
+      newGroupValidation[groupName] =
+        !fieldValue || isFieldValid
+          ? Object.assign({}, this.state.groupValidation[groupName], {
+              [fieldName]: isFieldValid,
+              invalidValuePresent: false
+            })
+          : Object.assign({}, this.state.groupValidation[groupName], {
+              [fieldName]: isFieldValid,
+              invalidValuePresent: true
+            })
       return this.setState(
         {
           groupValidation: newGroupValidation
