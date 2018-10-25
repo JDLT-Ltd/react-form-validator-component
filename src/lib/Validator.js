@@ -100,7 +100,7 @@ export default class Validator extends React.Component {
     } else this.removeError(fieldName, errorMessage)
   }
 
-  validateRules = (fieldName, fieldValue, fieldRules) =>{
+  validateRules = (fieldName, fieldValue, fieldRules) => {
     console.log('args in validateRules: ', fieldName, fieldValue, fieldRules)
     return fieldRules.reduce((accumulator, fieldRule) => {
       const rule = defaultRules[fieldRule] || fieldRule
@@ -109,7 +109,8 @@ export default class Validator extends React.Component {
       this.updateErrorsForField(validation, fieldName, rule.error)
 
       return accumulator && validation
-    }, true)}
+    }, true)
+  }
 
   validateGroup = (field, fieldValue, groupName) => {
     // check if any other member of the group is valid
@@ -170,7 +171,10 @@ export default class Validator extends React.Component {
     return isFieldValid
   }
 
-  validateFieldAndUpdateState(field, fieldValue) {
+  validateFieldAndUpdateState(fieldName, fieldValue) {
+    console.log('fieldName is', fieldName)
+    const field = typeof fieldName === 'string' ? this.props.fields.find(field => field.name === fieldName) : fieldName
+    console.log('field is', field)
     const onValidate = field.onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(field, fieldValue)) {
