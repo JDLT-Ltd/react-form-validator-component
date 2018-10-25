@@ -34,6 +34,7 @@ class App extends React.Component {
       name: 'emailAddresses',
       rules: ['isEmailArray'],
       required: 'test',
+      defaultValue: 'notanemail',
       label: 'Email addresses'
     },
     phoneNumber: {
@@ -84,11 +85,14 @@ class App extends React.Component {
             console.log('isFieldValid: ', isFieldValid)
             return (
               <Form>
-                <Form.Field>
-                  <label>Your Emails</label>
-                  <input name="emailAddresses" onChange={onChange} content="notAnEmail" />
-                  {this.renderErrors(errors.emailAddresses)}
-                </Form.Field>
+                <Form.Field
+                  control={'input'}
+                  label="Your emails"
+                  onChange={onChange}
+                  defaultValue="notanemail"
+                  name="emailAddresses"
+                />
+                {this.renderErrors(errors.emailAddresses)}
                 <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
                   Thats an Email!
                 </Button>
