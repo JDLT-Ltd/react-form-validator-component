@@ -65,7 +65,7 @@ export default class Validator extends React.Component {
 
   componentDidUpdate(prevProps) {
     const currentProps = this.props
-    if (currentProps.fields !== prevProps.fields)
+    if (JSON.stringify(currentProps.fields) !== JSON.stringify(prevProps.fields))
       this.setState({
         fields: currentProps.fields,
         errors: this.initialiseStateErrors(currentProps.fields),
@@ -146,8 +146,9 @@ export default class Validator extends React.Component {
           this.setState({
             validation: Object.assign(this.state.validation, {
               [groupName]:
-                Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
-                !this.state.groupValidation[groupName].invalidValuePresent
+                Object.values(
+                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
+                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
             })
           })
       )
