@@ -231,6 +231,7 @@ export default class Validator extends React.Component {
     const fields = Object.values(this.props.fields).filter(field => field)
 
     const initialValidator = fields.reduce((builtValidator, currentField) => {
+      console.log('accumulator in initialvalidation', builtValidator)
       const fieldInDom = document.getElementsByName(currentField.name)[0]
       const valueFromDom = (fieldInDom || {}).value
       const fieldValue = currentField.defaultValue || valueFromDom
