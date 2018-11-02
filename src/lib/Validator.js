@@ -155,20 +155,21 @@ export default class Validator extends React.Component {
           this.setState({
             validation: Object.assign(this.state.validation, {
               [groupName]:
-                Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
-                !this.state.groupValidation[groupName].invalidValuePresent
+                Object.values(
+                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
             })
           })
       )
       console.log(
         'groupValidation will return ',
-        Object.values(Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true })).some(
+        Object.values(Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false })).some(
           member => member === true
         ) && !this.state.groupValidation[groupName].invalidValuePresent
       )
       return (
         Object.values(
-          Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
+          Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
         ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
       )
     }
@@ -227,9 +228,10 @@ export default class Validator extends React.Component {
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
-      console.log('field', fieldName, 'returned true')
+      console.log('field', fieldName, 'was valid with', fieldValue)
       onValidate(fieldName, fieldValue)
     } else {
+      console.log('field', fieldName, 'was invalid with', fieldValue)
       if (this.state.validation[fieldName] === null) return null
       onValidate(fieldName, null)
     }
