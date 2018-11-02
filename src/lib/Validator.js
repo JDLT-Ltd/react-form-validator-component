@@ -237,6 +237,7 @@ export default class Validator extends React.Component {
       const fieldValue = currentField.defaultValue || valueFromDom
 
       builtValidator[currentField.name] = this.validateField(currentField.name, fieldValue)
+      return builtValidator
     }, {})
 
     console.log('setting formValid on validation: ', initialValidator)
