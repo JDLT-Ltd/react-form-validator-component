@@ -129,7 +129,7 @@ export default class Validator extends React.Component {
 
       // and if another member is valid and this field is empty or valid, all is well, otherwise set invalidValuePresent
       newGroupValidation[groupName] =
-        !fieldValue || isFieldValid
+        !fieldValue || (Array.isArray(fieldValue) && fieldValue.length === 0) || isFieldValid
           ? Object.assign({}, this.state.groupValidation[groupName], {
               [fieldName]: isFieldValid,
               invalidValuePresent: false
