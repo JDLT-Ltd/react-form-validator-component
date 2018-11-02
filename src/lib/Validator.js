@@ -12,7 +12,7 @@ export default class Validator extends React.Component {
       errors: this.initialiseStateErrors(props.fields),
       groupValidation: this.initialiseStateGroupValidation(props.fields),
       validation: this.initialiseStateFieldValidation(props.fields),
-      isFormValid: false,
+      isFormValid: Object.values(this.initialiseStateFieldValidation(props.fields)).every(value => value),
       validatorInput: {} // only used if user sets returnInput
     }
   }
@@ -71,7 +71,7 @@ export default class Validator extends React.Component {
         errors: this.initialiseStateErrors(currentProps.fields),
         groupValidation: this.initialiseStateGroupValidation(currentProps.fields),
         validation: this.initialiseStateFieldValidation(currentProps.fields),
-        isFormValid: false
+        isFormValid: Object.values(this.initialiseStateFieldValidation(currentProps.fields)).every(value => value)
       })
   }
 
@@ -143,14 +143,21 @@ export default class Validator extends React.Component {
           groupValidation: newGroupValidation
         },
         () =>
-          this.setState({
-            validation: Object.assign(this.state.validation, {
-              [groupName]:
-                Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
-                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-            })
-          })
+          this.setState(
+            {
+              validation: Object.assign(this.state.validation, {
+                [groupName]:
+                  Object.values(
+                    Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+                  ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
+              })
+            }, //callback hell which is caused by setState being async
+            () => {
+              this.setState({
+                isFormValid: Object.values(this.state.validation).every(value => value)
+              })
+            }
+          )
       )
       return isFieldValid
     }
@@ -197,13 +204,11 @@ export default class Validator extends React.Component {
     // standard validation
     const fieldRules = field.rules
     const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
-    this.setState({
-      validation: Object.assign(this.state.validation, { [fieldName]: isFieldValid })
-    })
+    addToStateProperty('validation', { [fieldName]: isFieldValid }, this)
     return isFieldValid
   }
 
-  validateFieldAndUpdateState(fieldName, fieldValue) {
+  validateFieldAndUpdateParentState(fieldName, fieldValue) {
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
@@ -212,10 +217,6 @@ export default class Validator extends React.Component {
       if (this.state.validation[fieldName] === null) return null
       onValidate(fieldName, null)
     }
-
-    this.setState({
-      isFormValid: Object.values(this.state.validation).every(value => value)
-    })
 
     // if the user provides the returnInput prop, we set the input to parent state regardless of whether it is valid in the validatorInput object
     if (this.props.returnInput) {
@@ -227,25 +228,22 @@ export default class Validator extends React.Component {
   initialValidation = async () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
-    const validateEachField = () =>
-      fields.forEach(field => {
-        const fieldInDom = document.getElementsByName(field.name)[0]
-        const valueFromDom = (fieldInDom || {}).value
-        const fieldValue = field.defaultValue || valueFromDom
+    const initialValidator = fields.reduce((builtValidator, currentField) => {
+      const fieldInDom = document.getElementsByName(currentField.name)[0]
+      const valueFromDom = (fieldInDom || {}).value
+      const fieldValue = currentField.defaultValue || valueFromDom
 
-        this.validateFieldAndUpdateState(field.name, fieldValue)
-        console.log('validation after this field', field.name)
-      })
-    await validateEachField()
-    console.log('validation is currently ', this.state.validation)
+      builtValidator[currentField.name] = this.validateField(currentField.name, fieldValue)
+    }, {})
     this.setState({
-      isFormValid: Object.values(this.state.validation).every(value => value)
+      initialValidator,
+      isFormValid: Object.values(initialValidator).every(value => value)
     })
   }
 
   onChange = (e, d) => {
     const changeEvent = d ? d : e.target
-    this.validateFieldAndUpdateState(changeEvent.name, changeEvent.value)
+    this.validateFieldAndUpdateParentState(changeEvent.name, changeEvent.value)
   }
 
   validateFieldsProp = () => {
