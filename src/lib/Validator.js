@@ -224,16 +224,20 @@ export default class Validator extends React.Component {
     }
   }
 
-  initialValidation = () => {
+  initialValidation = async () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
-    fields.forEach(field => {
-      const fieldInDom = document.getElementsByName(field.name)[0]
-      const valueFromDom = (fieldInDom || {}).value
-      const fieldValue = field.defaultValue || valueFromDom
+    const validateEachField = () =>
+      fields.forEach(field => {
+        const fieldInDom = document.getElementsByName(field.name)[0]
+        const valueFromDom = (fieldInDom || {}).value
+        const fieldValue = field.defaultValue || valueFromDom
 
-      this.validateFieldAndUpdateState(field.name, fieldValue)
-    })
+        this.validateFieldAndUpdateState(field.name, fieldValue)
+        console.log('validation after this field', field.name)
+      })
+    await validateEachField()
+    console.log('validation is currently ', this.state.validation)
     this.setState({
       isFormValid: Object.values(this.state.validation).every(value => value)
     })
