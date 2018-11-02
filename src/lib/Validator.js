@@ -113,7 +113,7 @@ export default class Validator extends React.Component {
       return accumulator && validation
     }, true)
 
-  validateGroup = (fieldName, fieldValue, groupName) => {
+  validateGroup = async (fieldName, fieldValue, groupName) => {
     // check if any other member of the group is valid
     console.log('validating group: ', groupName, 'field is', fieldName, 'value is', fieldValue)
     const otherMemberValid =
@@ -147,19 +147,19 @@ export default class Validator extends React.Component {
         isFieldValid
       )
       console.log('!!!! newGroupValidation is: ', newGroupValidation)
-      return this.setState(
-        {
-          groupValidation: newGroupValidation
-        },
-        () =>
-          this.setState({
-            validation: Object.assign(this.state.validation, {
-              [groupName]:
-                Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
-                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-            })
-          })
+      await this.setState({
+        groupValidation: newGroupValidation
+      })
+      console.log(
+        'groupValidation will return ',
+        Object.values(Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true })).some(
+          member => member === true
+        ) && !this.state.groupValidation[groupName].invalidValuePresent
+      )
+      return (
+        Object.values(
+          Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
+        ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
       )
     }
     // if no other member is valid, or this field has a value, check if this field is valid
