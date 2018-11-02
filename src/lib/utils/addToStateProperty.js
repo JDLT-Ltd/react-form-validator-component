@@ -5,9 +5,13 @@ export default (target, value, context) => {
     },
     () => {
       if (target === 'validation')
-        this.setState({
-          isFormValid: Object.values(this.state.validation).every(value => value)
-        })
+        console.log(
+          'addToStateProperty called on validation, checking isFormValid again with: ',
+          context.state.validation
+        )
+      this.setState({
+        isFormValid: Object.values(context.state.validation).every(value => value)
+      })
     }
   )
 }

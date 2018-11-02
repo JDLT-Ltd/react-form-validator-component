@@ -66,13 +66,14 @@ export default class Validator extends React.Component {
   componentDidUpdate(prevProps) {
     const currentProps = this.props
     if (JSON.stringify(currentProps.fields) !== JSON.stringify(prevProps.fields))
-      this.setState({
-        fields: currentProps.fields,
-        errors: this.initialiseStateErrors(currentProps.fields),
-        groupValidation: this.initialiseStateGroupValidation(currentProps.fields),
-        validation: this.initialiseStateFieldValidation(currentProps.fields),
-        isFormValid: Object.values(this.initialiseStateFieldValidation(currentProps.fields)).every(value => value)
-      })
+      console.log('setting formValid based on : ', this.initialiseStateFieldValidation(currentProps.fields))
+    this.setState({
+      fields: currentProps.fields,
+      errors: this.initialiseStateErrors(currentProps.fields),
+      groupValidation: this.initialiseStateGroupValidation(currentProps.fields),
+      validation: this.initialiseStateFieldValidation(currentProps.fields),
+      isFormValid: Object.values(this.initialiseStateFieldValidation(currentProps.fields)).every(value => value)
+    })
   }
 
   // default behaviour for handling successfully validated input
@@ -153,6 +154,7 @@ export default class Validator extends React.Component {
               })
             }, //callback hell which is caused by setState being async
             () => {
+              console.log('setting formValid on validation: ', this.state.validation)
               this.setState({
                 isFormValid: Object.values(this.state.validation).every(value => value)
               })
@@ -225,7 +227,7 @@ export default class Validator extends React.Component {
     }
   }
 
-  initialValidation = async () => {
+  initialValidation = () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
     const initialValidator = fields.reduce((builtValidator, currentField) => {
@@ -235,6 +237,8 @@ export default class Validator extends React.Component {
 
       builtValidator[currentField.name] = this.validateField(currentField.name, fieldValue)
     }, {})
+
+    console.log('setting formValid on validation: ', initialValidator)
     this.setState({
       initialValidator,
       isFormValid: Object.values(initialValidator).every(value => value)
