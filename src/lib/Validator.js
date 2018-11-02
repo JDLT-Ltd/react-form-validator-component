@@ -113,7 +113,7 @@ export default class Validator extends React.Component {
       return accumulator && validation
     }, true)
 
-  validateGroup = async (fieldName, fieldValue, groupName) => {
+  validateGroup = (fieldName, fieldValue, groupName) => {
     // check if any other member of the group is valid
     console.log('validating group: ', groupName, 'field is', fieldName, 'value is', fieldValue)
     const otherMemberValid =
@@ -147,7 +147,7 @@ export default class Validator extends React.Component {
         isFieldValid
       )
       console.log('!!!! newGroupValidation is: ', newGroupValidation)
-      await this.setState({
+      this.setState({
         groupValidation: newGroupValidation
       })
       console.log(
@@ -199,7 +199,9 @@ export default class Validator extends React.Component {
       return true
     }
     if (groupName) {
-      return this.validateGroup(fieldName, fieldValue, groupName)
+      const groupValidationValue = this.validateGroup(fieldName, fieldValue, groupName)
+      console.log('groupVlaidation returned', groupValidationValue)
+      return groupValidationValue
     }
     // standard validation
     const fieldRules = field.rules
@@ -215,6 +217,7 @@ export default class Validator extends React.Component {
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
+      console.log('field', fieldName, 'returned true')
       onValidate(fieldName, fieldValue)
     } else {
       if (this.state.validation[fieldName] === null) return null
