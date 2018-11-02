@@ -89,7 +89,7 @@ export default class Validator extends React.Component {
   }
 
   removeAllErrorMessages = fieldName => {
-    this.setState({ errors: Object.assign(this.state.errors, { [fieldName]: [] }) })
+    this.setState({ errors: Object.assign({}, this.state.errors, { [fieldName]: [] }) })
   }
 
   updateErrorsForField = (validation, fieldName, errorMessage) => {
@@ -146,7 +146,7 @@ export default class Validator extends React.Component {
         () =>
           this.setState(
             {
-              validation: Object.assign(this.state.validation, {
+              validation: Object.assign({}, this.state.validation, {
                 [groupName]:
                   Object.values(
                     Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
@@ -177,7 +177,7 @@ export default class Validator extends React.Component {
       },
       () =>
         this.setState({
-          validation: Object.assign(this.state.validation, {
+          validation: Object.assign({}.this.state.validation, {
             [groupName]:
               Object.values(
                 Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
@@ -223,6 +223,7 @@ export default class Validator extends React.Component {
     // if the user provides the returnInput prop, we set the input to parent state regardless of whether it is valid in the validatorInput object
     if (this.props.returnInput) {
       addToStateProperty('validatorInput', { [fieldName]: fieldValue }, this)
+      console.log('setting state to parent:', this.props.parent)
       this.props.parent.setState({ validatorInput: this.state.validatorInput })
     }
   }
@@ -239,7 +240,12 @@ export default class Validator extends React.Component {
       builtValidator[currentField.name] = this.validateField(currentField.name, fieldValue)
       return builtValidator
     }, {})
-
+    Object.entries(this.state.groupValidation).map(validationGroup => {
+      initialValidator[validationGroup[0]] =
+        Object.values(
+          Object.assign({}, validationGroup[1], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+        ).some(member => member === true) && validationGroup[1].invalidValuePresent
+    })
     console.log('setting formValid on validation: ', initialValidator)
     this.setState({
       initialValidator,

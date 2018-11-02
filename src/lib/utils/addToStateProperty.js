@@ -9,7 +9,7 @@ export default (target, value, context) => {
           'addToStateProperty called on validation, checking isFormValid again with: ',
           context.state.validation
         )
-      this.setState({
+      context.setState({
         isFormValid: Object.values(context.state.validation).every(value => value)
       })
     }
