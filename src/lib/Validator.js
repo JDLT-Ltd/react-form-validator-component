@@ -20,9 +20,9 @@ export default class Validator extends React.Component {
   componentDidMount() {
     this.validateFieldsProp()
     this.addRequiredRuleToFields()
-    this.validateFormAndUpdateState()
+    this.initialValidation()
     // TODO: only remove errors from empty fields
-    if (this.props.validateOnLoad)
+    if (!this.props.validateOnLoad)
       Object.values(this.props.fields).forEach(field => this.removeAllErrorMessages(field.name))
   }
 
@@ -115,6 +115,7 @@ export default class Validator extends React.Component {
 
   validateGroup = (fieldName, fieldValue, groupName) => {
     // check if any other member of the group is valid
+    console.log('validating group: ', groupName)
     const otherMemberValid =
       this.state.groupValidation[groupName] &&
       Object.entries(this.state.groupValidation[groupName])
@@ -122,6 +123,7 @@ export default class Validator extends React.Component {
         .some(member => member.includes(true))
     // if another member is valid do this
     if (otherMemberValid) {
+      console.log('another member is valid')
       const fieldRules = this.props.fields[fieldName].rules
       const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
 
@@ -202,6 +204,7 @@ export default class Validator extends React.Component {
   }
 
   validateFieldAndUpdateState(fieldName, fieldValue) {
+    console.log('inside validateFieldandUpdateState')
     const onValidate = this.props.fields[fieldName].onValidate || this.props.onValidate || this.onValidate
 
     if (this.validateField(fieldName, fieldValue)) {
@@ -211,6 +214,7 @@ export default class Validator extends React.Component {
       onValidate(fieldName, null)
     }
 
+    console.log('about to set isFormValid, validation values are', this.state.validation)
     this.setState({
       isFormValid: Object.values(this.state.validation).every(value => value)
     })
@@ -222,13 +226,13 @@ export default class Validator extends React.Component {
     }
   }
 
-  validateFormAndUpdateState = () => {
+  initialValidation = () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
     fields.forEach(field => {
-      const valueFromDom = document.getElementsByName(field.name)[0].value
-      const fieldValue =
-        field.defaultValue || (document.getElementsByName(field.name)[0] && valueFromDom ? valueFromDom : '')
+      const fieldInDom = document.getElementsByName(field.name)[0]
+      const valueFromDom = (fieldInDom || {}).value
+      const fieldValue = field.defaultValue || valueFromDom
 
       this.validateFieldAndUpdateState(field.name, fieldValue)
     })
@@ -281,6 +285,6 @@ Validator.propTypes = {
 }
 
 Validator.defaultProps = {
-  validateOnLoad: true,
+  validateOnLoad: false,
   returnInput: false
 }
