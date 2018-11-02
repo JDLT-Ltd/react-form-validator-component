@@ -147,26 +147,21 @@ export default class Validator extends React.Component {
         isFieldValid
       )
       console.log('!!!! newGroupValidation is: ', newGroupValidation)
-      this.setState(
-        {
-          groupValidation: newGroupValidation
-        },
-        () =>
-          this.setState({
-            validation: Object.assign(this.state.validation, {
-              [groupName]:
-                Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
-                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-            })
-          })
-      )
       console.log(
-        'groupValidation will return ',
-        Object.values(Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false })).some(
-          member => member === true
-        ) && !this.state.groupValidation[groupName].invalidValuePresent
+        'setting validation to be',
+        Object.values(
+          Object.assign({}, newGroupValidation, { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+        ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
       )
+      this.setState({
+        groupValidation: newGroupValidation,
+        validation: Object.assign(this.state.validation, {
+          [groupName]:
+            Object.values(
+              Object.assign({}, newGroupValidation, { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+            ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
+        })
+      })
       return (
         Object.values(
           Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
