@@ -20,7 +20,7 @@ export default class Validator extends React.Component {
   componentDidMount() {
     this.validateFieldsProp()
     this.addRequiredRuleToFields()
-    this.validateFormAndUpdateState()
+    this.initialValidation()
     // TODO: only remove errors from empty fields
     if (this.props.validateOnLoad)
       Object.values(this.props.fields).forEach(field => this.removeAllErrorMessages(field.name))
@@ -129,7 +129,7 @@ export default class Validator extends React.Component {
 
       // and if another member is valid and this field is empty or valid, all is well, otherwise set invalidValuePresent
       newGroupValidation[groupName] =
-        !fieldValue || isFieldValid
+        !fieldValue || (Array.isArray(fieldValue) && fieldValue.length === 0) || isFieldValid
           ? Object.assign({}, this.state.groupValidation[groupName], {
               [fieldName]: isFieldValid,
               invalidValuePresent: false
@@ -138,7 +138,7 @@ export default class Validator extends React.Component {
               [fieldName]: isFieldValid,
               invalidValuePresent: true
             })
-      return this.setState(
+      this.setState(
         {
           groupValidation: newGroupValidation
         },
@@ -147,11 +147,12 @@ export default class Validator extends React.Component {
             validation: Object.assign(this.state.validation, {
               [groupName]:
                 Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
+                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
                 ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
             })
           })
       )
+      return isFieldValid
     }
     // if no other member is valid, or this field has a value, check if this field is valid
     const fieldRules = this.props.fields[fieldName].rules
@@ -169,8 +170,9 @@ export default class Validator extends React.Component {
         this.setState({
           validation: Object.assign(this.state.validation, {
             [groupName]:
-              Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
-              !this.state.groupValidation[groupName].invalidValuePresent
+              Object.values(
+                Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+              ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
           })
         })
     )
@@ -222,15 +224,22 @@ export default class Validator extends React.Component {
     }
   }
 
-  validateFormAndUpdateState = () => {
+  initialValidation = async () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
-    fields.forEach(field => {
-      const valueFromDom = document.getElementsByName(field.name)[0].value
-      const fieldValue =
-        field.defaultValue || (document.getElementsByName(field.name)[0] && valueFromDom ? valueFromDom : '')
+    const validateEachField = () =>
+      fields.forEach(field => {
+        const fieldInDom = document.getElementsByName(field.name)[0]
+        const valueFromDom = (fieldInDom || {}).value
+        const fieldValue = field.defaultValue || valueFromDom
 
-      this.validateFieldAndUpdateState(field.name, fieldValue)
+        this.validateFieldAndUpdateState(field.name, fieldValue)
+        console.log('validation after this field', field.name)
+      })
+    await validateEachField()
+    console.log('validation is currently ', this.state.validation)
+    this.setState({
+      isFormValid: Object.values(this.state.validation).every(value => value)
     })
   }
 
