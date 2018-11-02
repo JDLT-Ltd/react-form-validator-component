@@ -138,7 +138,7 @@ export default class Validator extends React.Component {
               [fieldName]: isFieldValid,
               invalidValuePresent: true
             })
-      return this.setState(
+      this.setState(
         {
           groupValidation: newGroupValidation
         },
@@ -147,11 +147,12 @@ export default class Validator extends React.Component {
             validation: Object.assign(this.state.validation, {
               [groupName]:
                 Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: true }) // "filter" out invalidValuesPresent
+                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
                 ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
             })
           })
       )
+      return isFieldValid
     }
     // if no other member is valid, or this field has a value, check if this field is valid
     const fieldRules = this.props.fields[fieldName].rules
@@ -169,8 +170,9 @@ export default class Validator extends React.Component {
         this.setState({
           validation: Object.assign(this.state.validation, {
             [groupName]:
-              Object.values(this.state.groupValidation[groupName]).some(member => member === true) &&
-              !this.state.groupValidation[groupName].invalidValuePresent
+              Object.values(
+                Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+              ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
           })
         })
     )
