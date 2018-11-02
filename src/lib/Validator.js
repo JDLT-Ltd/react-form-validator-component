@@ -71,7 +71,9 @@ export default class Validator extends React.Component {
         errors: this.initialiseStateErrors(currentProps.fields),
         groupValidation: this.initialiseStateGroupValidation(currentProps.fields),
         validation: this.initialiseStateFieldValidation(currentProps.fields),
-        isFormValid: false
+        isFormValid: Object.values(this.initialiseStateFieldValidation(currentProps.fields)).every(
+          field => field === true
+        )
       })
   }
 
@@ -138,18 +140,20 @@ export default class Validator extends React.Component {
               [fieldName]: isFieldValid,
               invalidValuePresent: true
             })
+      const newValidation = Object.assign({}, this.state.validation, {
+        [groupName]:
+          Object.values(
+            Object.assign({}, newGroupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+          ).some(member => member === true) && !newGroupValidation[groupName].invalidValuePresent
+      })
       this.setState(
         {
           groupValidation: newGroupValidation
         },
         () =>
           this.setState({
-            validation: Object.assign(this.state.validation, {
-              [groupName]:
-                Object.values(
-                  Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
-                ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-            })
+            validation: newValidation,
+            isFormValid: Object.values(newValidation).every(field => field === true)
           })
       )
       return isFieldValid
@@ -197,9 +201,7 @@ export default class Validator extends React.Component {
     // standard validation
     const fieldRules = field.rules
     const isFieldValid = this.validateRules(fieldName, fieldValue, fieldRules)
-    this.setState({
-      validation: Object.assign(this.state.validation, { [fieldName]: isFieldValid })
-    })
+    addToStateProperty('validation', { [fieldName]: isFieldValid }, this)
     return isFieldValid
   }
 
@@ -213,10 +215,6 @@ export default class Validator extends React.Component {
       onValidate(fieldName, null)
     }
 
-    this.setState({
-      isFormValid: Object.values(this.state.validation).every(value => value)
-    })
-
     // if the user provides the returnInput prop, we set the input to parent state regardless of whether it is valid in the validatorInput object
     if (this.props.returnInput) {
       addToStateProperty('validatorInput', { [fieldName]: fieldValue }, this)
@@ -227,19 +225,12 @@ export default class Validator extends React.Component {
   initialValidation = async () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
-    const validateEachField = () =>
-      fields.forEach(field => {
-        const fieldInDom = document.getElementsByName(field.name)[0]
-        const valueFromDom = (fieldInDom || {}).value
-        const fieldValue = field.defaultValue || valueFromDom
+    fields.forEach(field => {
+      const fieldInDom = document.getElementsByName(field.name)[0]
+      const valueFromDom = (fieldInDom || {}).value
+      const fieldValue = field.defaultValue || valueFromDom
 
-        this.validateFieldAndUpdateState(field.name, fieldValue)
-        console.log('validation after this field', field.name)
-      })
-    await validateEachField()
-    console.log('validation is currently ', this.state.validation)
-    this.setState({
-      isFormValid: Object.values(this.state.validation).every(value => value)
+      this.validateFieldAndUpdateState(field.name, fieldValue)
     })
   }
 
