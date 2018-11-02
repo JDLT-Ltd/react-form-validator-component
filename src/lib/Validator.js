@@ -20,7 +20,7 @@ export default class Validator extends React.Component {
   componentDidMount() {
     this.validateFieldsProp()
     this.addRequiredRuleToFields()
-    this.validateFormAndUpdateState()
+    this.initialValidation()
     // TODO: only remove errors from empty fields
     if (this.props.validateOnLoad)
       Object.values(this.props.fields).forEach(field => this.removeAllErrorMessages(field.name))
@@ -224,15 +224,18 @@ export default class Validator extends React.Component {
     }
   }
 
-  validateFormAndUpdateState = () => {
+  initialValidation = () => {
     const fields = Object.values(this.props.fields).filter(field => field)
 
     fields.forEach(field => {
-      const valueFromDom = document.getElementsByName(field.name)[0].value
-      const fieldValue =
-        field.defaultValue || (document.getElementsByName(field.name)[0] && valueFromDom ? valueFromDom : '')
+      const fieldInDom = document.getElementsByName(field.name)[0]
+      const valueFromDom = (fieldInDom || {}).value
+      const fieldValue = field.defaultValue || valueFromDom
 
       this.validateFieldAndUpdateState(field.name, fieldValue)
+    })
+    this.setState({
+      isFormValid: Object.values(this.state.validation).every(value => value)
     })
   }
 
