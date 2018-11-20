@@ -169,20 +169,26 @@ export default class Validator extends React.Component {
 
     newGroupValidation[groupName] = Object.assign({}, newGroupValidation[groupName], { [fieldName]: isFieldValid })
 
+    const newValidation = Object.assign(this.state.validation, {
+      [groupName]:
+        Object.values(
+          Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+        ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
+    })
+    console.log('new Validation is: ', newValidation)
+
+    const newFormValid = Object.values(newValidation).every(field => field === true)
+
+    console.log('new formValid', newFormValid)
+
     this.setState(
       {
         groupValidation: Object.assign({}, this.state.groupValidation, newGroupValidation)
       },
       () => {
-        const newValidation = Object.assign(this.state.validation, {
-          [groupName]:
-            Object.values(
-              Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
-            ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-        })
         this.setState({
           validation: newValidation,
-          isFormValid: Object.values(newValidation).every(field => field === true)
+          isFormValid: newFormValid
         })
       }
     )
