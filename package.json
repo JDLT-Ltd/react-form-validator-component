@@ -42,7 +42,9 @@
     "webpack-html-plugin": "^0.1.1",
     "webpack-node-externals": "^1.7.2"
   },
-  "dependencies": {},
+  "dependencies": {
+    "babel-polyfill": "^6.26.0"
+  },
   "keywords": [
     "react",
     "form",
