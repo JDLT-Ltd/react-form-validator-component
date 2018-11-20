@@ -34,7 +34,6 @@ class App extends React.Component {
       name: 'emailAddresses',
       rules: ['isEmail'],
       required: 'test',
-      defaultValue: 'notanemail, testing array',
       label: 'Email addresses'
     },
     phoneNumber: {

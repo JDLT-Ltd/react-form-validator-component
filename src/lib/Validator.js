@@ -148,6 +148,9 @@ export default class Validator extends React.Component {
             Object.assign({}, newGroupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
           ).some(member => member === true) && !newGroupValidation[groupName].invalidValuePresent
       })
+      console.log('newValidation: ', newValidation)
+      const newValidState = Object.values(newValidation).every(field => field === true)
+      console.log('new ValidState', newValidState)
       this.setState(
         {
           groupValidation: newGroupValidation
@@ -155,7 +158,7 @@ export default class Validator extends React.Component {
         () =>
           this.setState({
             validation: newValidation,
-            isFormValid: Object.values(newValidation).every(field => field === true)
+            isFormValid: newValidState
           })
       )
       return isFieldValid
@@ -168,19 +171,28 @@ export default class Validator extends React.Component {
 
     newGroupValidation[groupName] = Object.assign({}, newGroupValidation[groupName], { [fieldName]: isFieldValid })
 
+    const newValidation = Object.assign(this.state.validation, {
+      [groupName]:
+        Object.values(
+          Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
+        ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
+    })
+    console.log('new Validation is: ', newValidation)
+
+    const newFormValid = Object.values(newValidation).every(field => field === true)
+
+    console.log('new formValid', newFormValid)
+
     this.setState(
       {
         groupValidation: Object.assign({}, this.state.groupValidation, newGroupValidation)
       },
-      () =>
+      () => {
         this.setState({
-          validation: Object.assign(this.state.validation, {
-            [groupName]:
-              Object.values(
-                Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
-              ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
-          })
+          validation: newValidation,
+          isFormValid: newFormValid
         })
+      }
     )
     return isFieldValid
   }
@@ -212,9 +224,15 @@ export default class Validator extends React.Component {
 
     if (this.validateField(fieldName, fieldValue)) {
       onValidate(fieldName, fieldValue)
+      this.setState({
+        isFormValid: Object.values(this.state.validation).every(field => field === true)
+      })
     } else {
       if (this.state.validation[fieldName] === null) return null
       onValidate(fieldName, null)
+      this.setState({
+        isFormValid: Object.values(this.state.validation).every(field => field === true)
+      })
     }
 
     // if the user provides the returnInput prop, we set the input to parent state regardless of whether it is valid in the validatorInput object
