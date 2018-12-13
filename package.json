@@ -25,6 +25,7 @@
     "babel-polyfill": "^6.26.0",
     "babel-preset-env": "^1.7.0",
     "babel-preset-react": "^6.24.1",
+    "babel-runtime": "^6.26.0",
     "css-loader": "^0.28.11",
     "eslint": "^5.0.1",
     "eslint-config-prettier": "^2.9.0",
@@ -43,8 +44,7 @@
     "webpack-html-plugin": "^0.1.1",
     "webpack-node-externals": "^1.7.2"
   },
-  "dependencies": {
-  },
+  "dependencies": {},
   "keywords": [
     "react",
     "form",

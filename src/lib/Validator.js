@@ -1,6 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
+import 'babel-polyfill'
 import * as defaultRules from './rules'
 
 import addToStateProperty from './utils/addToStateProperty'
@@ -13,7 +13,8 @@ export default class Validator extends React.Component {
       groupValidation: this.initialiseStateGroupValidation(props.fields),
       validation: this.initialiseStateFieldValidation(props.fields),
       isFormValid: false,
-      validatorInput: {} // only used if user sets returnInput
+      validatorInput: {}, // only used if user sets returnInput
+      hasChanged: {}
     }
   }
 
@@ -146,9 +147,8 @@ export default class Validator extends React.Component {
             Object.assign({}, newGroupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
           ).some(member => member === true) && !newGroupValidation[groupName].invalidValuePresent
       })
-      console.log('newValidation: ', newValidation)
+
       const newValidState = Object.values(newValidation).every(field => field === true)
-      console.log('new ValidState', newValidState)
       this.setState(
         {
           groupValidation: newGroupValidation
@@ -175,11 +175,8 @@ export default class Validator extends React.Component {
           Object.assign({}, this.state.groupValidation[groupName], { invalidValuePresent: false }) // "filter" out invalidValuesPresent
         ).some(member => member === true) && !this.state.groupValidation[groupName].invalidValuePresent
     })
-    console.log('new Validation is: ', newValidation)
 
     const newFormValid = Object.values(newValidation).every(field => field === true)
-
-    console.log('new formValid', newFormValid)
 
     this.setState(
       {
@@ -254,6 +251,7 @@ export default class Validator extends React.Component {
 
   onChange = (e, d) => {
     const changeEvent = d ? d : e.target
+    this.setState({ hasChanged: { ...this.state.changeEvent, [changeEvent.name]: true } })
     this.validateFieldAndUpdateState(changeEvent.name, changeEvent.value)
   }
 
@@ -278,10 +276,11 @@ export default class Validator extends React.Component {
   }
 
   render() {
-    const { errors, isFormValid, validation, groupValidation } = this.state
+    const { errors, isFormValid, validation, groupValidation, hasChanged } = this.state
     return this.props.children({
       isFormValid,
       isFieldValid: Object.assign({}, validation, ...Object.values(groupValidation)), //we  spread in all values of group Validation to show grouped fields individually
+      hasChanged,
       fields: toArray(this.props.fields || {}),
       onChange: this.onChange,
       errors

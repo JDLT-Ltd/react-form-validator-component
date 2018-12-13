@@ -80,7 +80,7 @@ class App extends React.Component {
         <Header as="h1">Examples for using RFVC</Header>
         <Header as="h2">Basic Validation</Header>
         <Validator fields={this.fields} parent={this} returnInput>
-          {({ isFormValid, isFieldValid, onChange, errors }) => {
+          {({ isFormValid, isFieldValid, onChange, errors, hasChanged }) => {
             console.log('isFieldValid: ', isFieldValid)
             return (
               <Form>
@@ -122,6 +122,8 @@ class App extends React.Component {
                 {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
                 <hr />
                 <Button disabled={!isFormValid}>Test</Button>
+
+                {`hasChanged: ${hasChanged.emailAddresses}`}
               </Form>
             )
           }}
