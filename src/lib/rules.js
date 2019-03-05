@@ -29,6 +29,7 @@ const isFullName = {
 
 const isEmail = {
   validator: data => {
+    if (data === undefined) return false
     if (data.match(emailRegex)) return true
     return false
   },

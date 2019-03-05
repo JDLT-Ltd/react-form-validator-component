@@ -1,6 +1,6 @@
 import React from 'react'
 import reactDOM from 'react-dom'
-import { Form, Header, Label, Container, Button } from 'semantic-ui-react'
+import { Form, Header, Label, Container, Button, Modal } from 'semantic-ui-react'
 
 import { Validator } from '../lib/index'
 
@@ -83,48 +83,52 @@ class App extends React.Component {
           {({ isFormValid, isFieldValid, onChange, errors, hasChanged }) => {
             console.log('isFieldValid: ', isFieldValid)
             return (
-              <Form>
-                <Form.Field
-                  control={'input'}
-                  label="Your emails"
-                  onChange={onChange}
-                  defaultValue={'notanemail, testing array'}
-                  name="emailAddresses"
-                />
-                {this.renderErrors(errors.emailAddresses)}
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
-                  Thats an Email!
-                </Button>
-                <Form.Field>
-                  <label>Your Phone number</label>
-                  <input name="phoneNumber" onChange={onChange} />
-                  {this.renderErrors(errors.phoneNumber)}
-                </Form.Field>
-                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.phoneNumber}>
-                  Its a phone number
-                </Button>
-                <Form.Field>
-                  <label>Your Website (this uses the isUrl rule)</label>
-                  <input name="url" onChange={onChange} />
-                  {this.renderErrors(errors.url)}
-                </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.url}>
-                  Some Url
-                </Button>
-                <Form.Field>
-                  <label>Your Name</label>
-                  <input name="name" onChange={onChange} />
-                  {this.renderErrors(errors.name)}
-                </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.name}>
-                  This is your Name
-                </Button>
-                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                <hr />
-                <Button disabled={!isFormValid}>Test</Button>
+              <Modal trigger={<Button content="trigger" />}>
+                <Modal.Content>
+                  <Form>
+                    <Form.Field
+                      control={'input'}
+                      label="Your emails"
+                      onChange={onChange}
+                      defaultValue={''}
+                      name="emailAddresses"
+                    />
+                    {this.renderErrors(errors.emailAddresses)}
+                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
+                      Thats an Email!
+                    </Button>
+                    <Form.Field>
+                      <label>Your Phone number</label>
+                      <input name="phoneNumber" onChange={onChange} />
+                      {this.renderErrors(errors.phoneNumber)}
+                    </Form.Field>
+                    <Button onClick={() => alert('is it?')} disabled={!isFieldValid.phoneNumber}>
+                      Its a phone number
+                    </Button>
+                    <Form.Field>
+                      <label>Your Website (this uses the isUrl rule)</label>
+                      <input name="url" onChange={onChange} />
+                      {this.renderErrors(errors.url)}
+                    </Form.Field>
+                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.url}>
+                      Some Url
+                    </Button>
+                    <Form.Field>
+                      <label>Your Name</label>
+                      <input name="name" onChange={onChange} />
+                      {this.renderErrors(errors.name)}
+                    </Form.Field>
+                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.name}>
+                      This is your Name
+                    </Button>
+                    {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
+                    <hr />
+                    <Button disabled={!isFormValid}>Test</Button>
 
-                {`hasChanged: ${hasChanged.emailAddresses}`}
-              </Form>
+                    {`hasChanged: ${hasChanged.emailAddresses}`}
+                  </Form>
+                </Modal.Content>
+              </Modal>
             )
           }}
         </Validator>
