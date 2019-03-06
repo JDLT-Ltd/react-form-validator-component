@@ -243,7 +243,7 @@ export default class Validator extends React.Component {
     fields.forEach(field => {
       const fieldInDom = document.getElementsByName(field.name)[0]
       const valueFromDom = (fieldInDom || {}).value
-      const fieldValue = field.defaultValue || valueFromDom
+      const fieldValue = field.defaultValue || valueFromDom || ''
 
       this.validateFieldAndUpdateState(field.name, fieldValue)
     })
