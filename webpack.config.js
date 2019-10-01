@@ -1,7 +1,7 @@
 const path = require('path')
 
 module.exports = {
-  entry: path.resolve(__dirname, 'src/TableParts/index.js'),
+  entry: path.resolve(__dirname, 'src/lib/TableParts/index.js'),
   output: {
     path: path.resolve(__dirname, 'build/'),
     filename: 'index.js',

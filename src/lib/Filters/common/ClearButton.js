@@ -7,7 +7,7 @@ const ClearButton = props => {
   const { clearFilter } = useContext(DataTableContext)
   return (
     <Form.Button
-      size='small'
+      size="small"
       floated={'right'}
       onClick={() => clearFilter(propKey)}
       content={content || 'Clear'}

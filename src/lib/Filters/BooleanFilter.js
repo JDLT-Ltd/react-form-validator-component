@@ -11,12 +11,15 @@ const BooleanFilter = props => {
   const isFirstUpdate = useRef(true)
   const { filters, setFilter, initFilter } = useContext(DataTableContext)
 
-  useLayoutEffect(() => {
-    if (isFirstUpdate.current) {
-      initFilter(propKey, filterType)
-      isFirstUpdate.current = false
-    }
-  }, [propKey, initFilter])
+  useLayoutEffect(
+    () => {
+      if (isFirstUpdate.current) {
+        initFilter(propKey, filterType)
+        isFirstUpdate.current = false
+      }
+    },
+    [propKey, initFilter]
+  )
 
   if (filters[propKey]) {
     const { indeterminate, checked } = filters[propKey].value
