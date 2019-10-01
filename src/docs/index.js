@@ -1,250 +1,117 @@
-import React from 'react'
-import reactDOM from 'react-dom'
-import { Form, Header, Label, Container, Button, Modal } from 'semantic-ui-react'
+import React, { useState, useEffect, useCallback } from 'react'
+import DataTable from './TableParts/index.js'
+import { Container } from 'semantic-ui-react'
+import { columns, headerData } from './data'
+import './App.css'
+import { fetchContacts } from './gql'
+// import common from 'common-react'
 
-import { Validator } from '../lib/index'
+const shouldFilterAndSortOnTheClient = false
+let offset = 0
+let limit = 10
+const filters = {}
+const sort = { sortBy: 'lastName', direction: 'ascending' }
 
-//this is a custom rule
-// const isRequired = {
-//   validator: data => {
-//     if (data) return true
-//     return false
-//   },
-//   error: 'Please provide a value'
-// }
-// const options = [
-//   {
-//     text: 'option 1',
-//     value: 1
-//   },
-//   {
-//     text: 'option 2',
-//     value: 2
-//   }
-// ]
-class App extends React.Component {
-  constructor(props) {
-    super(props)
+// const {
+//   Util: { useApiService }
+// } = common
 
-    this.state = {}
-  }
+const App = () => {
+  const getData = useCallback(async (offset, limit, filters, sort) => {
+    return await fetchContacts(offset, limit, filters, sort)
+  }, [])
 
-  fields = {
-    emailAddresses: {
-      name: 'emailAddresses',
-      rules: ['isEmail'],
-      required: 'test',
-      label: 'Email addresses'
+  // const [{ data: dataAndCount, isLoading: isLoadingContacts, setApiArguments: getContacts, isError }] = [
+  //   useApiService(fetchContacts, shouldFilterAndSortOnTheClient ? [] : [offset, limit, filters, sort], null)
+  // ]
+
+  const [data, setData] = useState([])
+  const [dataLength, setDataLength] = useState(0)
+  const [isLoadingData, setIsLoadingData] = useState(false)
+
+  // useEffect(() => {
+  //   if (dataAndCount) {
+  //     const { data: fetchedData, dataCount } = dataAndCount
+  //     const dataWithLinks = fetchedData.map(datum => {
+  //       return { ...datum, __link: '/' }
+  //     })
+  //     setData(dataWithLinks)
+  //     setDataLength(dataCount)
+  //   }
+  // }, [dataAndCount])
+
+  // useEffect(() => {
+  //   if (contactsCount) {
+  //     setDataLength(contactsCount)
+  //   }
+  // }, [fetchedContacts, contactsCount])
+
+  // const fetchData = useCallback(
+  //   async (offset, limit, filters, sort) => await getContacts([offset, limit, filters, sort]),
+  //   [getContacts]
+  // )
+  // const fetchDataCount = useCallback(
+  //   async filters => {
+  //     return await getContactsCount([filters])
+  //   },
+  //   [getContactsCount]
+  // )
+
+  // useEffect(() => {
+  //   setIsLoadingData(true)
+  //   const fetchAndSetData = async () => {
+  //     const fetchedContacts = await getData(offset, limit, filters, sort)
+  //     setData(fetchedContacts.data)
+  //   }
+  //   fetchAndSetData()
+  //   setIsLoadingData(false)
+  // }, [getData])
+
+  // useEffect(() => {
+  //   setIsLoadingDataCount(true)
+  //   const fetchAndSetCount = async () => {
+  //     const contactsCount = await getDataCount(filters)
+  //     setDataLength(contactsCount)
+  //   }
+  //   fetchAndSetCount()
+  //   setIsLoadingDataCount(false)
+  // }, [getDataCount])
+
+  const fetchData = useCallback(
+    async (offset, limit, filters, sort) => {
+      setIsLoadingData(true)
+      const { data, dataCount } = await getData(offset, limit, filters, sort)
+      setIsLoadingData(false)
+      return {
+        data,
+        dataCount
+      }
     },
-    phoneNumber: {
-      name: 'phoneNumber',
-      rules: ['isPhoneNumber'],
-      required: 'test',
-      label: 'phoneNumber'
-    },
-    url: {
-      name: 'url',
-      rules: ['isUrl'],
-      required: true,
-      label: 'url'
-    },
-    name: {
-      name: 'name',
-      rules: ['isFullName'],
-      required: true,
-      label: 'name'
-    }
-    //,
-    // sources: {
-    //   rules: [],
-    //   name: 'sources',
-    //   required: true,
-    //   label: 'sources',
-    //   defaultValue: [options[0].value]
-    // }
-  }
+    [getData]
+  )
+  // const fetchDataWithUseApiService = useCallback(
+  //   async (offset, limit, filters, sort) => getContacts([offset, limit, filters, sort]),
+  //   [getContacts]
+  // )
 
-  renderErrors(errors) {
-    return errors.map((error, i) => {
-      return (
-        <Label color="red" key={i}>
-          {error}
-        </Label>
-      )
-    })
-  }
-
-  render() {
-    return (
-      <Container>
-        <Header as="h1">Examples for using RFVC</Header>
-        <Header as="h2">Basic Validation</Header>
-        <Validator fields={this.fields} parent={this} returnInput>
-          {({ isFormValid, isFieldValid, onChange, errors, hasChanged }) => {
-            console.log('isFieldValid: ', isFieldValid)
-            return (
-              <Modal trigger={<Button content="trigger" />}>
-                <Modal.Content>
-                  <Form>
-                    <Form.Field
-                      control={'input'}
-                      label="Your emails"
-                      onChange={onChange}
-                      defaultValue={''}
-                      name="emailAddresses"
-                    />
-                    {this.renderErrors(errors.emailAddresses)}
-                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
-                      Thats an Email!
-                    </Button>
-                    <Form.Field>
-                      <label>Your Phone number</label>
-                      <input name="phoneNumber" onChange={onChange} />
-                      {this.renderErrors(errors.phoneNumber)}
-                    </Form.Field>
-                    <Button onClick={() => alert('is it?')} disabled={!isFieldValid.phoneNumber}>
-                      Its a phone number
-                    </Button>
-                    <Form.Field>
-                      <label>Your Website (this uses the isUrl rule)</label>
-                      <input name="url" onChange={onChange} />
-                      {this.renderErrors(errors.url)}
-                    </Form.Field>
-                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.url}>
-                      Some Url
-                    </Button>
-                    <Form.Field>
-                      <label>Your Name</label>
-                      <input name="name" onChange={onChange} />
-                      {this.renderErrors(errors.name)}
-                    </Form.Field>
-                    <Button onClick={() => alert('sure is')} disabled={!isFieldValid.name}>
-                      This is your Name
-                    </Button>
-                    {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                    <hr />
-                    <Button disabled={!isFormValid}>Test</Button>
-
-                    {`hasChanged: ${hasChanged.emailAddresses}`}
-                  </Form>
-                </Modal.Content>
-              </Modal>
-            )
-          }}
-        </Validator>
-        {/* <Header as={'h2'}>Basic Validation using fields to map (and no semantic-ui)</Header>
-        <Validator fields={this.fields} parent={this}>
-          {({ isFormValid, fields, onChange, errors }) => {
-            return (
-              <Form>
-                {fields &&
-                  fields.map((input, i) => {
-                    return (
-                      <div key={i}>
-                        <label>{input.value.label}</label>
-                        <input name={input.value.name} onChange={onChange} />
-                        {this.renderErrors(errors[input.value.name])}
-                      </div>
-                    )
-                  })}
-                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                <hr />
-                <button disabled={!isFormValid}>Test</button>
-              </Form>
-            )
-          }}
-        </Validator>
-        <Header as="h2">Validation using isFieldValid</Header>
-        <Validator fields={this.fields} parent={this}>
-          {({ isFormValid, isFieldValid, onChange, errors }) => {
-            return (
-              <Form>
-                <Form.Field>
-                  <label>Your Emails</label>
-                  <Input name="emailAddresses" onChange={onChange} />
-                  {this.renderErrors(errors.emailAddresses)}
-                </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
-                  Thats an Email!
-                </Button>
-                <Form.Field>
-                  <label>Something</label>
-                  <Input name="something" onChange={onChange} />
-                  {this.renderErrors(errors.something)}
-                </Form.Field>
-                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
-                  Its not nothing
-                </Button>
-                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                <hr />
-                <button disabled={!isFormValid}>Test</button>
-              </Form>
-            )
-          }}
-        </Validator>
-        <Header as="h2">Validation using validateOnLoad and isFieldValid</Header>
-        <Validator fields={this.fields} parent={this} validateOnLoad>
-          {({ isFormValid, isFieldValid, onChange, errors }) => {
-            return (
-              <Form>
-                <Form.Field>
-                  <label>Your Emails</label>
-                  <Input name="emailAddresses" onChange={onChange} value={'I_DONT_WORK'} />
-                  {this.renderErrors(errors.emailAddresses)}
-                </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
-                  Thats an Email!
-                </Button>
-                <Form.Field>
-                  <label>Something</label>
-                  <Input name="something" onChange={onChange} defaultValue={''} />
-                  {this.renderErrors(errors.something)}
-                </Form.Field>
-                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
-                  Its not nothing
-                </Button>
-                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                <hr />
-                <button disabled={!isFormValid}>Test</button>
-              </Form>
-            )
-          }}
-        </Validator>
-        <Header as="h2">Validation using a custom onValidate handler</Header>
-        <Validator
-          fields={this.fields}
-          onValidate={(fieldName, fieldValue) => this.setState({ hidden: fieldValue })}
-          validateOnLoad
-        >
-          {({ isFormValid, isFieldValid, onChange, errors }) => {
-            return (
-              <Form>
-                <Form.Field>
-                  <label>Your Emails</label>
-                  <Input name="emailAddresses" onChange={onChange} />
-                  {this.renderErrors(errors.emailAddresses)}
-                </Form.Field>
-                <Button onClick={() => alert('sure is')} disabled={!isFieldValid.emailAddresses}>
-                  Thats an Email!
-                </Button>
-                <Form.Field>
-                  <label>Something</label>
-                  <Input name="something" onChange={onChange} />
-                  {this.renderErrors(errors.something)}
-                </Form.Field>
-                <Button onClick={() => alert('is it?')} disabled={!isFieldValid.something}>
-                  Its not nothing
-                </Button>
-                {<span>Form is {isFormValid ? 'valid' : 'not valid'}</span>}
-                <hr />
-                <button disabled={!isFormValid}>Test</button>
-              </Form>
-            )
-          }}
-        </Validator> */}
-      </Container>
-    )
-  }
+  return (
+    <Container style={{ paddingTop: '5rem' }}>
+      <DataTable
+        // data={data}
+        columns={columns}
+        headerData={headerData}
+        defaultSortValues={sort}
+        fetchDataQuery={fetchData}
+        initialPageSize={limit}
+        offset={offset}
+        // dataLength={dataLength}
+        isLoading={isLoadingData}
+        emptyTableDescription={'No contacts found'}
+        loadingTableDescription={'Loading contacts'}
+        shouldFilterAndSortOnTheClient={shouldFilterAndSortOnTheClient}
+      />
+    </Container>
+  )
 }
 
-reactDOM.render(<App />, document.getElementById('root'))
+export default App

@@ -1,21 +1,21 @@
-const path = require("path");
+const path = require('path')
 
 module.exports = {
-  entry: path.resolve(__dirname, "src/lib/index.js"),
+  entry: path.resolve(__dirname, 'src/TableParts/index.js'),
   output: {
-    path: path.resolve(__dirname, "build/lib"),
-    filename: "index.js",
-    library: "",
-    libraryTarget: "commonjs"
+    path: path.resolve(__dirname, 'build/'),
+    filename: 'index.js',
+    library: '',
+    libraryTarget: 'commonjs'
   },
-  mode: "production",
+  mode: 'production',
   module: {
     rules: [
       {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: "babel-loader"
+          loader: 'babel-loader'
         }
       }
     ]
@@ -38,16 +38,16 @@ module.exports = {
   externals: {
     // Don't bundle react or react-dom
     react: {
-      commonjs: "react",
-      commonjs2: "react",
-      amd: "React",
-      root: "React"
+      commonjs: 'react',
+      commonjs2: 'react',
+      amd: 'React',
+      root: 'React'
     },
-    "react-dom": {
-      commonjs: "react-dom",
-      commonjs2: "react-dom",
-      amd: "ReactDOM",
-      root: "ReactDOM"
+    'react-dom': {
+      commonjs: 'react-dom',
+      commonjs2: 'react-dom',
+      amd: 'ReactDOM',
+      root: 'ReactDOM'
     }
   }
-};
+}
