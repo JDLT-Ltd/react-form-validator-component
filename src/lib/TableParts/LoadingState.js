@@ -5,7 +5,7 @@ export const LoadingTable = ({ columnLength, loadingTableDescription }) => (
   <Table.Body key="loadingState">
     <Table.Row>
       <Table.Cell colSpan={columnLength}>
-        <Segment vertical placeholder basic textAlign="center">
+        <Segment vertical placeholder="true" basic textAlign="center">
           <Loader active content={loadingTableDescription} />
         </Segment>
       </Table.Cell>

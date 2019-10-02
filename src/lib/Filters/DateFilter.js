@@ -1,6 +1,5 @@
 import React, { useRef, useLayoutEffect, useContext, useState, useEffect } from 'react'
 import SemanticDatepicker from 'react-semantic-ui-datepickers'
-import 'react-semantic-ui-datepickers/dist/react-semantic-ui-datepickers.css'
 import { Form } from 'semantic-ui-react'
 import { DataTableContext } from '../common/DataTableContext'
 import FilterPopup from './common/FilterPopup'
@@ -16,20 +15,26 @@ const DateFilter = props => {
   const [endDateObj, setEndDateObj] = useState(null)
   const ref = useRef(true)
 
-  useEffect(() => {
-    if (ref.current && filters[propKey] && filters[propKey].value) {
-      setStartDateObj(filters[propKey].value.dateStart ? new Date(filters[propKey].value.dateStart) : null)
-      setEndDateObj(filters[propKey].value.dateEnd ? new Date(filters[propKey].value.dateEnd) : null)
-      ref.current = false
-    }
-  }, [filters, propKey])
+  useEffect(
+    () => {
+      if (ref.current && filters[propKey] && filters[propKey].value) {
+        setStartDateObj(filters[propKey].value.dateStart ? new Date(filters[propKey].value.dateStart) : null)
+        setEndDateObj(filters[propKey].value.dateEnd ? new Date(filters[propKey].value.dateEnd) : null)
+        ref.current = false
+      }
+    },
+    [filters, propKey]
+  )
 
-  useLayoutEffect(() => {
-    if (isFirstUpdate.current) {
-      initFilter(propKey, filterType)
-      isFirstUpdate.current = false
-    }
-  }, [propKey, initFilter])
+  useLayoutEffect(
+    () => {
+      if (isFirstUpdate.current) {
+        initFilter(propKey, filterType)
+        isFirstUpdate.current = false
+      }
+    },
+    [propKey, initFilter]
+  )
 
   const today = new Date()
 

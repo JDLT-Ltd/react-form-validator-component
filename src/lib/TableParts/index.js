@@ -2,7 +2,6 @@ import React, { useState, useLayoutEffect, useRef, useEffect, useCallback } from
 import { sortData, filterSortAndSliceData } from '../util/filterFunctions'
 import { DataTableContextProvider } from '../common/DataTableContext'
 import { formatFilters } from '../common/formatFilters'
-
 import MainTable from './Table'
 
 const DataTable = ({
@@ -35,19 +34,25 @@ const DataTable = ({
 
   const [isLoadingDataFromWithinTableComponent, setIsLoadingDataFromWithinTableComponent] = useState(false)
 
-  useEffect(() => {
-    const headerDataObject = Object.values(headerData).find(datum => datum && datum.propKey === activeSort)
-    if (headerDataObject) {
-      setHeaderDataActiveSortObject(headerDataObject.filterType)
-    }
-  }, [activeSort, headerData])
+  useEffect(
+    () => {
+      const headerDataObject = Object.values(headerData).find(datum => datum && datum.propKey === activeSort)
+      if (headerDataObject) {
+        setHeaderDataActiveSortObject(headerDataObject.filterType)
+      }
+    },
+    [activeSort, headerData]
+  )
 
-  useEffect(() => {
-    if (!shouldFilterAndSortOnTheClient && data && !ref.current) {
-      setTotalDataLength(dataLength)
-      setPageData(data)
-    }
-  }, [dataLength, shouldFilterAndSortOnTheClient, data])
+  useEffect(
+    () => {
+      if (!shouldFilterAndSortOnTheClient && data && !ref.current) {
+        setTotalDataLength(dataLength)
+        setPageData(data)
+      }
+    },
+    [dataLength, shouldFilterAndSortOnTheClient, data]
+  )
 
   const filterAndSortData = useCallback(
     data => {
@@ -73,75 +78,81 @@ const DataTable = ({
     [activeSort, sortDirection, headerData, defaultFilterValues, offset, pageSize]
   )
 
-  useLayoutEffect(() => {
-    if (data && data.length > 0 && ref.current) {
-      ref.current = false
-      if (shouldFilterAndSortOnTheClient) {
-        const activeSortObject = Object.values(headerData).find(datum => datum.propKey === activeSort)
-        if (defaultFilterValues) {
-          filterAndSortData(data)
-        } else {
-          const sortedAllData = sortData(data, activeSort, sortDirection, (activeSortObject || {}).filterType)
-          setPageData(sortedAllData.slice(offset, pageSize + offset))
-          setTotalDataLength(sortedAllData.length)
-          return setAllData(sortedAllData)
-        }
-      } else {
-        setPageData(data)
-        setTotalDataLength(dataLength)
-      }
-    }
-  }, [
-    data,
-    dataLength,
-    filterAndSortData,
-    defaultFilterValues,
-    shouldFilterAndSortOnTheClient,
-    offset,
-    pageSize,
-    columns,
-    sortDirection,
-    headerData,
-    activeSort,
-    setPageData,
-    setAllData
-  ])
-
-  useEffect(() => {
-    if (!data && ref.current) {
-      ref.current = false
-      setIsLoadingDataFromWithinTableComponent(true)
-      const getDataAndDataCount = async () => {
-        const { data: fetchedData, dataCount } = await fetchDataQuery(
-          offset,
-          shouldFilterAndSortOnTheClient ? null : pageSize,
-          defaultFilterValues,
-          {
-            sortBy: activeSort,
-            direction: sortDirection
+  useLayoutEffect(
+    () => {
+      if (data && data.length > 0 && ref.current) {
+        ref.current = false
+        if (shouldFilterAndSortOnTheClient) {
+          const activeSortObject = Object.values(headerData).find(datum => datum.propKey === activeSort)
+          if (defaultFilterValues) {
+            filterAndSortData(data)
+          } else {
+            const sortedAllData = sortData(data, activeSort, sortDirection, (activeSortObject || {}).filterType)
+            setPageData(sortedAllData.slice(offset, pageSize + offset))
+            setTotalDataLength(sortedAllData.length)
+            return setAllData(sortedAllData)
           }
-        )
-        if (shouldFilterAndSortOnTheClient) filterAndSortData(fetchedData)
-        else {
-          setPageData(fetchedData)
-          setTotalDataLength(dataCount)
+        } else {
+          setPageData(data)
+          setTotalDataLength(dataLength)
         }
-        setIsLoadingDataFromWithinTableComponent(false)
       }
-      getDataAndDataCount()
-    }
-  }, [
-    data,
-    shouldFilterAndSortOnTheClient,
-    activeSort,
-    fetchDataQuery,
-    defaultFilterValues,
-    offset,
-    pageSize,
-    sortDirection,
-    dataLength,
-    filterAndSortData
-  ])
+    },
+    [
+      data,
+      dataLength,
+      filterAndSortData,
+      defaultFilterValues,
+      shouldFilterAndSortOnTheClient,
+      offset,
+      pageSize,
+      columns,
+      sortDirection,
+      headerData,
+      activeSort,
+      setPageData,
+      setAllData
+    ]
+  )
+
+  useEffect(
+    () => {
+      if (!data && ref.current) {
+        ref.current = false
+        setIsLoadingDataFromWithinTableComponent(true)
+        const getDataAndDataCount = async () => {
+          const { data: fetchedData, dataCount } = await fetchDataQuery(
+            offset,
+            shouldFilterAndSortOnTheClient ? null : pageSize,
+            defaultFilterValues,
+            {
+              sortBy: activeSort,
+              direction: sortDirection
+            }
+          )
+          if (shouldFilterAndSortOnTheClient) filterAndSortData(fetchedData)
+          else {
+            setPageData(fetchedData)
+            setTotalDataLength(dataCount)
+          }
+          setIsLoadingDataFromWithinTableComponent(false)
+        }
+        getDataAndDataCount()
+      }
+    },
+    [
+      data,
+      shouldFilterAndSortOnTheClient,
+      activeSort,
+      fetchDataQuery,
+      defaultFilterValues,
+      offset,
+      pageSize,
+      sortDirection,
+      dataLength,
+      filterAndSortData
+    ]
+  )
 
   return (
     <DataTableContextProvider>

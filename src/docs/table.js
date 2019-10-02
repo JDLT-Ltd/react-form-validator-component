@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react'
+import React, { useState, useCallback } from 'react'
 import DataTable from '../lib/TableParts/index.js'
 import { Container } from 'semantic-ui-react'
 import { columns, headerData } from '../lib/data'
@@ -8,7 +8,7 @@ import { fetchContacts } from '../lib/gql'
 const shouldFilterAndSortOnTheClient = false
 let offset = 0
 let limit = 10
-const filters = {}
+// const filters = {}
 const sort = { sortBy: 'lastName', direction: 'ascending' }
 
 // const {
@@ -16,6 +16,7 @@ const sort = { sortBy: 'lastName', direction: 'ascending' }
 // } = common
 
 const App = () => {
+  console.log('app')
   const getData = useCallback(async (offset, limit, filters, sort) => {
     return await fetchContacts(offset, limit, filters, sort)
   }, [])
@@ -24,8 +25,8 @@ const App = () => {
   //   useApiService(fetchContacts, shouldFilterAndSortOnTheClient ? [] : [offset, limit, filters, sort], null)
   // ]
 
-  const [data, setData] = useState([])
-  const [dataLength, setDataLength] = useState(0)
+  // const [data, setData] = useState([])
+  // const [dataLength, setDataLength] = useState(0)
   const [isLoadingData, setIsLoadingData] = useState(false)
 
   // useEffect(() => {
