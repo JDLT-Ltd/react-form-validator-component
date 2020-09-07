@@ -40,7 +40,7 @@
     "semantic-ui-react": "^0.81.3",
     "webpack": "^4.12.2",
     "webpack-cli": "^3.0.8",
-    "webpack-dev-server": "^3.1.4",
+    "webpack-dev-server": "^3.1.11",
     "webpack-html-plugin": "^0.1.1",
     "webpack-node-externals": "^1.7.2"
   },
